@@ -13,17 +13,18 @@ public class BoardRequestDto {
     private String content;
     private String scope;
     private MultipartFile image;
+    private String city;
 
     @Getter
     @Setter
     public static class BoardUploadDto extends BoardRequestDto {
-        private String city;
     }
 
     public static class BoardInfoDto extends BoardRequestDto{
 
     }
-
+    @Getter
+    @Setter
     public static class BoardUpdateDto extends BoardRequestDto{
 
     }

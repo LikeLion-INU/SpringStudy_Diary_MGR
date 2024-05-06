@@ -5,6 +5,8 @@ import com.example.diary.board.domain.BoardImage;
 import com.example.diary.board.domain.Scope;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,23 +43,52 @@ public class BoardResponseDto {
 
         }
 
-        private static BoardImageResponseDto byteToBase64(BoardImage boardImage) {
-            BoardImageResponseDto boardImageResponseDto = new BoardImageResponseDto();
-            String image = BoardImageResponseDto.convertByteArrayToBase64(boardImage.getData());
-            boardImageResponseDto.setImageDataBase64(image);
-            return boardImageResponseDto;
-        }
-
     }
 
     @SuperBuilder
     public static class BoardInfoDto extends BoardResponseDto{
 
+        public static BoardInfoDto toDto(Board board) {
+            return BoardInfoDto.builder()
+                    .id(board.getId())
+                    .title(board.getTitle())
+                    .content(board.getContent())
+                    .date(board.getDate())
+                    .city(board.getCity())
+                    .scope(board.getScope())
+                    .weather(board.getWeather())
+                    .image(BoardResponseDto.byteToBase64(board.getBoardImage()))
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class BoardListDto{
+        private Long id;
+        private String title;
+        private LocalDate date;
+
+        public static BoardListDto toDto(Board board) {
+            return BoardListDto.builder()
+                    .id(board.getId())
+                    .date(board.getDate())
+                    .title(board.getTitle())
+                    .build();
+        }
     }
 
     @SuperBuilder
     public static class BoardUpdateDto extends BoardResponseDto{
 
+    }
+
+    private static BoardImageResponseDto byteToBase64(BoardImage boardImage) {
+        BoardImageResponseDto boardImageResponseDto = new BoardImageResponseDto();
+        String image = BoardImageResponseDto.convertByteArrayToBase64(boardImage.getData());
+        boardImageResponseDto.setImageDataBase64(image);
+        return boardImageResponseDto;
     }
 
 }

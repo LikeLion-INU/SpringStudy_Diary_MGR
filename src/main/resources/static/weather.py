@@ -10,7 +10,6 @@ from urllib.request import urlopen
 
 data = sys.argv[1:]
 
-print(data)
 # info = '1'
 info = data[0]
 city = data[1]
@@ -22,7 +21,7 @@ weather = ""
 #오늘
 if info == '1':
     # city = "인천"
-    # key = ""
+    # key = "c9ceb2f1e71d36dc3dbb5522352381ee"
     # date = '2024-05-06'
     
     tr = Translator()
@@ -40,7 +39,12 @@ if info == '1':
     main = weather[0]['main'] #기본
     minTa = float(json_file['main']['temp_min']) -273.15
     maxTa = float(json_file['main']['temp_max']) -273.15
-    sumRn = json_file['rain']['1h'] #mm
+    json_str = json.dumps(data)
+    if 'rain' not in json_str:
+        sumRn = ""
+    else:
+        sumRn = json_file['rain']['1h'] #mm
+
     avgWs = json_file['wind']['speed'] #m/s
     avgTca = json_file['clouds']['all']
 
@@ -84,12 +88,13 @@ elif 30 < avgTca <= 60:
 elif 60 < avgTca:
     weather = "흐림"
 
-if  0.5 < sumRn <= 0.8:
-    weather = "소나기"
-elif 0.8 < sumRn < 4:
-    weather = "비"
-elif 4 < sumRn :
-    weather = "하루종일 비"
+if sumRn != "":
+    if  0.5 < sumRn <= 0.8:
+        weather = "소나기"
+    elif 0.8 < sumRn < 4:
+        weather = "비"
+    elif 4 < sumRn :
+        weather = "하루종일 비"
 
 if weather=="":
     weather = "최고 " + str(maxTa) +"도로 맑음"

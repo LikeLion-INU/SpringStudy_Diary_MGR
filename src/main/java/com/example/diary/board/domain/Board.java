@@ -1,5 +1,6 @@
 package com.example.diary.board.domain;
 
+import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,4 +29,19 @@ public class Board extends BaseEntity {
     private BoardImage boardImage;
 
 //    private User user;
+
+    public void toUpdateBoard(BoardRequestDto.BoardUpdateDto boardUpdateDto) {
+        this.title = boardUpdateDto.getTitle();
+        this.content = boardUpdateDto.getContent();
+        this.scope = Scope.valueOf(boardUpdateDto.getScope());
+    }
+
+    public void toUpdateWeatherAndCity(String weather, String city){
+        this.city = city;
+        this.weather = weather;
+    }
+
+    public void toUpdateWeather(String weather) {
+        this.weather = weather;
+    }
 }

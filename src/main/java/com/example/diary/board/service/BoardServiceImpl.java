@@ -17,12 +17,22 @@ public interface BoardServiceImpl {
     /*
     모든 일기장 가져오기 (목록 조회)
      */
-    List<BoardResponseDto.BoardInfoDto> findAll();
+    List<BoardResponseDto.BoardListDto> findAll();
 
     /*
     일기장 수정
+    - 도시가 바뀌었을 경우 날씨도 같이 변경
+    - 이미지 파일 바뀌었을 경우 변경, 이미지 삭제한 경우 삭제
      */
-    BoardResponseDto.BoardInfoDto update(BoardRequestDto.BoardUpdateDto boardUpdateDto);
+    BoardResponseDto.BoardInfoDto update(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException;
+
+    /*
+        날씨 수정
+         */
+    BoardResponseDto.BoardInfoDto updateWeather(Long id, String weather);
+
+    BoardResponseDto.BoardInfoDto updateCity(Long id, String city);
+
 
     /*
     일기장 하나 가져오기
