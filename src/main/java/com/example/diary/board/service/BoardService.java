@@ -90,29 +90,32 @@ public class BoardService implements BoardServiceImpl{
 
     private Board insertBoard(BoardRequestDto boardRequestDto) throws IOException {
 //        User user = httpSession.getAttribute("user");
-        boardRepository.findByDate(DateService.strToDate(boardRequestDto.getDate()))
-                .orElseThrow(IllegalArgumentException::new);
-        BoardImage boardImage = null;
-        if (boardRequestDto.getImage() !=null){
-            boardImage = BoardImage.builder()
-                    .data(boardRequestDto.getImage().getBytes())
-                    .build();
-            boardImageRepository.save(boardImage);
-        }
-        String weather = WeatherService.getWeather(boardRequestDto.getCity(), boardRequestDto.getDate(), jdbcTemplate);
-        if (weather == null){
-            throw new IllegalArgumentException();
-        }
-        return Board.builder()
-                .title(boardRequestDto.getTitle())
-                .date(DateService.strToDate(boardRequestDto.getDate()))
-                .content(boardRequestDto.getContent())
-                .city(boardRequestDto.getCity())
-                .scope(Scope.valueOf(boardRequestDto.getScope()))
-                .weather(weather)
-                .boardImage(boardImage)
+        Board board = boardRepository.findByDate(DateService.strToDate(boardRequestDto.getDate()));
+        if (board == null) {
+            BoardImage boardImage = null;
+            if (boardRequestDto.getImage() != null) {
+                boardImage = BoardImage.builder()
+                        .data(boardRequestDto.getImage().getBytes())
+                        .build();
+                boardImageRepository.save(boardImage);
+            }
+            String weather = WeatherService.getWeather(boardRequestDto.getCity(), boardRequestDto.getDate(), jdbcTemplate);
+            if (weather == null) {
+                throw new IllegalArgumentException();
+            }
+            return Board.builder()
+                    .title(boardRequestDto.getTitle())
+                    .date(DateService.strToDate(boardRequestDto.getDate()))
+                    .content(boardRequestDto.getContent())
+                    .city(boardRequestDto.getCity())
+                    .scope(Scope.valueOf(boardRequestDto.getScope()))
+                    .weather(weather)
+                    .boardImage(boardImage)
 //                .user(user)
-                .build();
+                    .build();
+        } else {
+            throw new IllegalArgumentException("일기장 이미 존재");
+        }
     }
 
     @Override
