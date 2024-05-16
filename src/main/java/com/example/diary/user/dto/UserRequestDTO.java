@@ -1,11 +1,9 @@
-package com.example.diary.dto;
+package com.example.diary.user.dto;
 
-import com.example.diary.entity.UserEntity;
+import com.example.diary.user.entity.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.catalina.User;
 
 // 요청받은 값 DTO -> Entity
 @Getter
