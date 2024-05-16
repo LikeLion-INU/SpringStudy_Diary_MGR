@@ -1,9 +1,9 @@
-package com.example.diary.service;
+package com.example.diary.user.service;
 
-import com.example.diary.dto.UserRequestDTO;
-import com.example.diary.dto.UserResponseDTO;
-import com.example.diary.entity.UserEntity;
-import com.example.diary.repository.UserRepository;
+import com.example.diary.user.dto.UserRequestDTO;
+import com.example.diary.user.dto.UserResponseDTO;
+import com.example.diary.user.entity.UserEntity;
+import com.example.diary.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
