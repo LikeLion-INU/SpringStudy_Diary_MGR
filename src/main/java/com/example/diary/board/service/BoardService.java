@@ -5,6 +5,8 @@ import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.board.domain.Scope;
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.dto.BoardResponseDto;
+import com.example.diary.board.image.dto.BoardImageRequestDto;
+import com.example.diary.board.image.dto.BoardImageResponseDto;
 import com.example.diary.board.image.repository.BoardImageRepository;
 import com.example.diary.board.repository.BoardRepository;
 import com.example.diary.global.DateService;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.example.diary.board.image.dto.BoardImageResponseDto.convertByteArrayToBase64;
 
 @Service
 @RequiredArgsConstructor
@@ -70,21 +74,28 @@ public class BoardService implements BoardServiceImpl{
         return BoardResponseDto.BoardInfoDto.toDto(board);
     }
 
-    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-        if (boardUpdateDto.getImage() == null){
+    @Override
+    public BoardImageResponseDto updateImage(BoardImageRequestDto boardImageRequestDto) throws IOException {
+        BoardImage boardImage = boardImageRepository.findById(boardImageRequestDto.getId())
+                .orElseThrow(() -> new RuntimeException("게시판 이미지를 찾을 수 없습니다."));
+        if (boardImageRequestDto.getImage() == null){
             log.info("[Update] No Image File");
-            boardImageRepository.deleteById(board.getBoardImage().getId());
+            boardImageRepository.deleteById(boardImage.getId());
         } else{
-            if (board.getBoardImage().getData() != boardUpdateDto.getImage().getBytes()) {
+            if (boardImage.getData() != boardImageRequestDto.getImage().getBytes()) {
                 log.info("[Update] Image File Update");
-                board.getBoardImage().toUpdateData(boardUpdateDto.getImage().getBytes());
+                boardImage.toUpdateData(boardImageRequestDto.getImage().getBytes());
             } else{
                 log.info("[Update] Same Image File");
             }
         }
+        return new BoardImageResponseDto(convertByteArrayToBase64(boardImageRequestDto.getImage().getBytes()));
 
+    }
+
+    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
         board.toUpdateBoard(boardUpdateDto);
         log.info("[Update] Board Update Success");
         return board;

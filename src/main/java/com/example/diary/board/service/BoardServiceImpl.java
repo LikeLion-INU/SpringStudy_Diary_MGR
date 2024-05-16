@@ -2,6 +2,8 @@ package com.example.diary.board.service;
 
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.dto.BoardResponseDto;
+import com.example.diary.board.image.dto.BoardImageRequestDto;
+import com.example.diary.board.image.dto.BoardImageResponseDto;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,9 +36,11 @@ public interface BoardServiceImpl {
     BoardResponseDto.BoardInfoDto updateCity(Long id, String city);
 
 
+    BoardImageResponseDto updateImage(BoardImageRequestDto boardImageRequestDto) throws IOException;
+
     /*
-    일기장 하나 가져오기
-     */
+        일기장 하나 가져오기
+         */
     BoardResponseDto.BoardInfoDto get(Long boardId);
 
     /*

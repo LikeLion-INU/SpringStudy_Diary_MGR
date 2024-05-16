@@ -2,6 +2,8 @@ package com.example.diary.board.controller;
 
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.dto.BoardResponseDto;
+import com.example.diary.board.image.dto.BoardImageRequestDto;
+import com.example.diary.board.image.dto.BoardImageResponseDto;
 import com.example.diary.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +37,16 @@ public class BoardController {
     @Transactional
     @PutMapping("/update/{board_id}")
     public ResponseEntity<BoardResponseDto.BoardInfoDto> update(
-            @PathVariable("board_id") Long id, @ModelAttribute BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
+            @PathVariable("board_id") Long id, @RequestBody BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
         return ResponseEntity.ok()
                 .body(boardService.update(id, boardUpdateDto));
+    }
+
+    @Transactional
+    @PatchMapping("/update/boardImage")
+    public ResponseEntity<BoardImageResponseDto> updateImage(@ModelAttribute BoardImageRequestDto boardImageRequestDto) throws IOException {
+        return ResponseEntity.ok()
+                .body(boardService.updateImage(boardImageRequestDto));
     }
 
     @Transactional

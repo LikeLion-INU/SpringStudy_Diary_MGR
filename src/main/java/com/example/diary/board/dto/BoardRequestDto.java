@@ -18,6 +18,7 @@ public class BoardRequestDto {
     @Getter
     @Setter
     public static class BoardUploadDto extends BoardRequestDto {
+
     }
 
     public static class BoardInfoDto extends BoardRequestDto{
@@ -25,7 +26,12 @@ public class BoardRequestDto {
     }
     @Getter
     @Setter
-    public static class BoardUpdateDto extends BoardRequestDto{
+    public static class BoardUpdateDto {
+        private String title;
+        private String date;
+        private String content;
+        private String scope;
+        private String city;
 
     }
 
