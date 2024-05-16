@@ -1,4 +1,4 @@
-package com.example.diary.board.dto;
+package com.example.diary.weather.dto;
 
 import lombok.Data;
 
