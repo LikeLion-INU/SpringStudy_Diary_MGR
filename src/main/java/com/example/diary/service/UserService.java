@@ -31,28 +31,29 @@ public class UserService {
     public List<UserEntity> getAllUser(){return userRepository.findAll();}
 
     //회원조회(개인)
-    public UserEntity searchOneUser(Long id) {
+    public UserResponseDTO searchOneUser(Long id) {
         Optional<UserEntity> userId = userRepository.findById(id);
 
         if (userId.isPresent()) {
-            return userId.get();
+            return UserResponseDTO.toUserOptionalDTO(userId);
         } else return null;
     }
 
     //회원 정보 수정
     @Transactional
-    public UserEntity editUser(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO editUser(UserRequestDTO userRequestDTO) {
         Optional<UserEntity> userEntity = userRepository.findByUserNickname(userRequestDTO.getUserNickname());
 
         if (userEntity.isPresent()) {
             UserEntity user  = userEntity.get();
             user.editUser(userRequestDTO.getUserNickname(), userRequestDTO.getUserGender(), userRequestDTO.getUserBirth(), userRequestDTO.getUserArea(), userRequestDTO.getUserMbti());
-            return user;
+
+            return UserResponseDTO.toUserDTO(user);
         } else return null;
     }
 
     @Transactional
-    public UserEntity deleteUser(Long id) {
+    public UserResponseDTO deleteUser(Long id) {
         Optional<UserEntity> userEntity = userRepository.findById(id);
 
         log.info(userEntity.toString());
@@ -60,7 +61,7 @@ public class UserService {
         if (userEntity.isPresent()) {
             UserEntity user = userEntity.get();
             userRepository.deleteById(user.getId());
-            return user;
+            return UserResponseDTO.toUserDTO(user);
         } else return null;
     }
 
