@@ -1,12 +1,14 @@
 package com.example.diary.board.service;
 
 import com.example.diary.board.domain.Board;
-import com.example.diary.board.domain.BoardImage;
+import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.board.domain.Scope;
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.dto.BoardResponseDto;
-import com.example.diary.board.repository.BoardImageRepository;
+import com.example.diary.board.image.repository.BoardImageRepository;
 import com.example.diary.board.repository.BoardRepository;
+import com.example.diary.global.DateService;
+import com.example.diary.weather.service.WeatherService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

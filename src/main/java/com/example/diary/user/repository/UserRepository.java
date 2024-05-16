@@ -1,6 +1,6 @@
-package com.example.diary.repository;
+package com.example.diary.user.repository;
 
-import com.example.diary.entity.UserEntity;
+import com.example.diary.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

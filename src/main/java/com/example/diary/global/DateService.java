@@ -1,4 +1,4 @@
-package com.example.diary.board.service;
+package com.example.diary.global;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

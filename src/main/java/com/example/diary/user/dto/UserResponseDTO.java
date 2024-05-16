@@ -1,8 +1,7 @@
-package com.example.diary.dto;
+package com.example.diary.user.dto;
 
-import com.example.diary.entity.UserEntity;
+import com.example.diary.user.entity.UserEntity;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.example.diary.entity;
+package com.example.diary.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
