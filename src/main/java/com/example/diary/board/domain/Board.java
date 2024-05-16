@@ -1,6 +1,7 @@
 package com.example.diary.board.domain;
 
 import com.example.diary.board.dto.BoardRequestDto;
+import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,11 +26,17 @@ public class Board extends BaseEntity {
     private String city;
 
     private Scope scope;
+
     @OneToOne(fetch = FetchType.LAZY)
     private BoardImage boardImage;
 
+    private int likeCnt = 0;
+
 //    private User user;
 
+    public void toUpdateLike(int likeCnt){
+        this.likeCnt = likeCnt;
+    }
     public void toUpdateBoard(BoardRequestDto.BoardUpdateDto boardUpdateDto) {
         this.title = boardUpdateDto.getTitle();
         this.content = boardUpdateDto.getContent();

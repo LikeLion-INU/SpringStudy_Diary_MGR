@@ -1,14 +1,14 @@
 package com.example.diary.board.dto;
 
 import com.example.diary.board.domain.Board;
-import com.example.diary.board.domain.BoardImage;
+import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.board.domain.Scope;
+import com.example.diary.board.image.dto.BoardImageResponseDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -24,6 +24,7 @@ public class BoardResponseDto {
     protected String weather;
     protected Scope scope;
     protected BoardImageResponseDto image;
+    protected int likeCnt;
 
     @SuperBuilder
     public static class BoardUploadDto extends BoardResponseDto {
@@ -57,6 +58,7 @@ public class BoardResponseDto {
                     .city(board.getCity())
                     .scope(board.getScope())
                     .weather(board.getWeather())
+                    .likeCnt(board.getLikeCnt())
                     .image(BoardResponseDto.byteToBase64(board.getBoardImage()))
                     .build();
         }
@@ -69,12 +71,14 @@ public class BoardResponseDto {
         private Long id;
         private String title;
         private LocalDate date;
+        private int likeCnt;
 
         public static BoardListDto toDto(Board board) {
             return BoardListDto.builder()
                     .id(board.getId())
                     .date(board.getDate())
                     .title(board.getTitle())
+                    .likeCnt(board.getLikeCnt())
                     .build();
         }
     }
