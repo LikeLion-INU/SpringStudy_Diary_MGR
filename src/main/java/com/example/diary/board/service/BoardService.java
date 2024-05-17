@@ -5,6 +5,8 @@ import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.board.domain.Scope;
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.dto.BoardResponseDto;
+import com.example.diary.board.image.dto.BoardImageRequestDto;
+import com.example.diary.board.image.dto.BoardImageResponseDto;
 import com.example.diary.board.image.repository.BoardImageRepository;
 import com.example.diary.board.repository.BoardRepository;
 import com.example.diary.global.DateService;
@@ -16,7 +18,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.diary.board.image.dto.BoardImageResponseDto.convertByteArrayToBase64;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +54,7 @@ public class BoardService implements BoardServiceImpl{
     @Override
     public BoardResponseDto.BoardInfoDto update(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
         Board board = updateBoard(id, boardUpdateDto);
+        log.info("[Update] Board Update");
         return BoardResponseDto.BoardInfoDto.toDto(board);
     }
 
@@ -57,6 +63,7 @@ public class BoardService implements BoardServiceImpl{
         Board board = boardRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         board.toUpdateWeather(weather);
+        log.info("[Update] Weather Update");
         return BoardResponseDto.BoardInfoDto.toDto(board);
     }
 
@@ -70,21 +77,28 @@ public class BoardService implements BoardServiceImpl{
         return BoardResponseDto.BoardInfoDto.toDto(board);
     }
 
-    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-        if (boardUpdateDto.getImage() == null){
+    @Override
+    public BoardImageResponseDto updateImage(BoardImageRequestDto boardImageRequestDto) throws IOException {
+        BoardImage boardImage = boardImageRepository.findById(boardImageRequestDto.getId())
+                .orElseThrow(() -> new RuntimeException("게시판 이미지를 찾을 수 없습니다."));
+        if (boardImageRequestDto.getImage() == null){
             log.info("[Update] No Image File");
-            boardImageRepository.deleteById(board.getBoardImage().getId());
+            boardImageRepository.deleteById(boardImage.getId());
         } else{
-            if (board.getBoardImage().getData() != boardUpdateDto.getImage().getBytes()) {
+            if (boardImage.getData() != boardImageRequestDto.getImage().getBytes()) {
                 log.info("[Update] Image File Update");
-                board.getBoardImage().toUpdateData(boardUpdateDto.getImage().getBytes());
+                boardImage.toUpdateData(boardImageRequestDto.getImage().getBytes());
             } else{
                 log.info("[Update] Same Image File");
             }
         }
+        return new BoardImageResponseDto(convertByteArrayToBase64(boardImageRequestDto.getImage().getBytes()));
 
+    }
+
+    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
         board.toUpdateBoard(boardUpdateDto);
         log.info("[Update] Board Update Success");
         return board;
@@ -137,5 +151,40 @@ public class BoardService implements BoardServiceImpl{
         boardRepository.deleteById(boardId);
         log.info("[Delete] Board & BoardImage Delete");
         return "Delete";
+    }
+
+    @Override
+    public List<BoardResponseDto.BoardListDto> findAllCanSee() {
+        //        Long userId = httpSession.getAttribute("user");
+        //todo 유저까지 반영
+//        List<Long> bestieId = bestieRepository.findAllByUserId(userId);
+        //나를 친한 친구로 생각해주는 친구들의 아이디 리스트를 가져와서 그 친구들의 Bestie 게시물 반환
+
+        List<Long> bestieId = new ArrayList<>();
+        bestieId.add((long)2);
+        bestieId.add((long)3);
+        List<Board> publicBoards = boardRepository.findAllByScope(Scope.PUBLIC);
+        List<Board> bestieBoards = new ArrayList<>();
+        for (Long aLong : bestieId) {
+            List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, aLong);
+            bestieBoards.addAll(boards);
+        }
+        log.info("[findAll] Find all Boards List that User can see");
+
+        List<BoardResponseDto.BoardListDto> boardListDtos = new ArrayList<>();
+        boardListDtos.addAll(publicBoards.stream()
+                .map(BoardResponseDto.BoardListDto::toDto).toList());
+        boardListDtos.addAll(bestieBoards.stream()
+                .map(BoardResponseDto.BoardListDto::toDto)
+                .toList());
+
+        return boardListDtos;
+    }
+
+    public Scope updateScope(Long id, BoardRequestDto.BoardScopeUpdateDto boardScopeUpdateDto) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow((() -> new RuntimeException("게시판을 찾을 수 없습니다.")));
+        board.toUpdateScope(boardScopeUpdateDto.getScope());
+        return boardScopeUpdateDto.getScope();
     }
 }

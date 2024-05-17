@@ -3,6 +3,7 @@ package com.example.diary.board.domain;
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.global.BaseEntity;
+import com.example.diary.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,7 +33,8 @@ public class Board extends BaseEntity {
 
     private int likeCnt = 0;
 
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserEntity user;
 
     public void toUpdateLike(int likeCnt){
         this.likeCnt = likeCnt;
@@ -40,7 +42,6 @@ public class Board extends BaseEntity {
     public void toUpdateBoard(BoardRequestDto.BoardUpdateDto boardUpdateDto) {
         this.title = boardUpdateDto.getTitle();
         this.content = boardUpdateDto.getContent();
-        this.scope = Scope.valueOf(boardUpdateDto.getScope());
     }
 
     public void toUpdateWeatherAndCity(String weather, String city){
@@ -51,4 +52,6 @@ public class Board extends BaseEntity {
     public void toUpdateWeather(String weather) {
         this.weather = weather;
     }
+
+    public void toUpdateScope(Scope scope) {this.scope = scope;}
 }

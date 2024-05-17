@@ -1,7 +1,10 @@
 package com.example.diary.board.controller;
 
+import com.example.diary.board.domain.Scope;
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.dto.BoardResponseDto;
+import com.example.diary.board.image.dto.BoardImageRequestDto;
+import com.example.diary.board.image.dto.BoardImageResponseDto;
 import com.example.diary.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,22 +29,44 @@ public class BoardController {
                 .body(boardService.upload(boardUploadDto));
     }
 
+    //본인이 작성한 모든 글 가져 오기
     @GetMapping("/findAll")
     public ResponseEntity<List<BoardResponseDto.BoardListDto>> findAll(){
         return ResponseEntity.ok()
                 .body(boardService.findAll());
     }
 
+    @GetMapping("/find/iCanSee")
+    public ResponseEntity<List<BoardResponseDto.BoardListDto>> findAllCanSee(){
+        return ResponseEntity.ok()
+                .body(boardService.findAllCanSee());
+    }
+
     @Transactional
     @PutMapping("/update/{board_id}")
     public ResponseEntity<BoardResponseDto.BoardInfoDto> update(
-            @PathVariable("board_id") Long id, @ModelAttribute BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
+            @PathVariable("board_id") Long id, @RequestBody BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
         return ResponseEntity.ok()
                 .body(boardService.update(id, boardUpdateDto));
     }
 
     @Transactional
-    @PutMapping("/update/weather/{board_id}")
+    @PatchMapping("/update/scope/{board_id}")
+    public ResponseEntity<Scope> updateScope(@PathVariable("board_id") Long id, @RequestBody BoardRequestDto.BoardScopeUpdateDto boardScopeUpdateDto){
+        return ResponseEntity.ok()
+                .body(boardService.updateScope(id, boardScopeUpdateDto));
+
+    }
+
+    @Transactional
+    @PatchMapping("/update/boardImage")
+    public ResponseEntity<BoardImageResponseDto> updateImage(@ModelAttribute BoardImageRequestDto boardImageRequestDto) throws IOException {
+        return ResponseEntity.ok()
+                .body(boardService.updateImage(boardImageRequestDto));
+    }
+
+    @Transactional
+    @PatchMapping("/update/weather/{board_id}")
     public ResponseEntity<BoardResponseDto.BoardInfoDto> updateWeather(
             @PathVariable("board_id") Long id, @RequestBody Map<String, String> requestBody){
         return ResponseEntity.ok()
@@ -49,7 +74,7 @@ public class BoardController {
     }
 
     @Transactional
-    @PutMapping("/update/city/{board_id}")
+    @PatchMapping("/update/city/{board_id}")
     public ResponseEntity<BoardResponseDto.BoardInfoDto> updateCity(
             @PathVariable("board_id") Long id, @RequestBody Map<String, String> requestBody){
         return ResponseEntity.ok()

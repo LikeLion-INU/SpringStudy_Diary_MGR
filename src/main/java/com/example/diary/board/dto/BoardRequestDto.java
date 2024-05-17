@@ -1,5 +1,6 @@
 package com.example.diary.board.dto;
 
+import com.example.diary.board.domain.Scope;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,15 +19,21 @@ public class BoardRequestDto {
     @Getter
     @Setter
     public static class BoardUploadDto extends BoardRequestDto {
+
     }
 
     public static class BoardInfoDto extends BoardRequestDto{
 
     }
     @Getter
-    @Setter
-    public static class BoardUpdateDto extends BoardRequestDto{
+    public static class BoardUpdateDto {
+        private String title;
+        private String content;
+    }
 
+    @Getter
+    public static class BoardScopeUpdateDto{
+        private Scope scope;
     }
 
 }
