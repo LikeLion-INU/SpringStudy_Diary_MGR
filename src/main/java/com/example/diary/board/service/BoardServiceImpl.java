@@ -33,13 +33,18 @@ public interface BoardServiceImpl {
          */
     BoardResponseDto.BoardInfoDto updateWeather(Long id, String weather);
 
+    /*
+    도시 수정 -> 날씨도 같이 수정 된다.
+     */
     BoardResponseDto.BoardInfoDto updateCity(Long id, String city);
 
-
+    /*
+    이미지만 수정하는 PATCH
+     */
     BoardImageResponseDto updateImage(BoardImageRequestDto boardImageRequestDto) throws IOException;
 
     /*
-        일기장 하나 가져오기
+    일기장 하나 가져오기
          */
     BoardResponseDto.BoardInfoDto get(Long boardId);
 
@@ -47,4 +52,9 @@ public interface BoardServiceImpl {
     일기 삭제
      */
     String delete(Long boardId);
+
+    /*
+    내가 볼 수 있는 게시판 목록 가져오기 (PUBLIC, BESTIE)
+     */
+    List<BoardResponseDto.BoardListDto> findAllCanSee();
 }

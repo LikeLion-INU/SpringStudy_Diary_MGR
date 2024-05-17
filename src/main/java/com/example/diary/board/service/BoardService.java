@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.diary.board.image.dto.BoardImageResponseDto.convertByteArrayToBase64;
@@ -53,6 +54,7 @@ public class BoardService implements BoardServiceImpl{
     @Override
     public BoardResponseDto.BoardInfoDto update(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
         Board board = updateBoard(id, boardUpdateDto);
+        log.info("[Update] Board Update");
         return BoardResponseDto.BoardInfoDto.toDto(board);
     }
 
@@ -61,6 +63,7 @@ public class BoardService implements BoardServiceImpl{
         Board board = boardRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         board.toUpdateWeather(weather);
+        log.info("[Update] Weather Update");
         return BoardResponseDto.BoardInfoDto.toDto(board);
     }
 
@@ -148,5 +151,40 @@ public class BoardService implements BoardServiceImpl{
         boardRepository.deleteById(boardId);
         log.info("[Delete] Board & BoardImage Delete");
         return "Delete";
+    }
+
+    @Override
+    public List<BoardResponseDto.BoardListDto> findAllCanSee() {
+        //        Long userId = httpSession.getAttribute("user");
+        //todo 유저까지 반영
+//        List<Long> bestieId = bestieRepository.findAllByUserId(userId);
+        //나를 친한 친구로 생각해주는 친구들의 아이디 리스트를 가져와서 그 친구들의 Bestie 게시물 반환
+
+        List<Long> bestieId = new ArrayList<>();
+        bestieId.add((long)2);
+        bestieId.add((long)3);
+        List<Board> publicBoards = boardRepository.findAllByScope(Scope.PUBLIC);
+        List<Board> bestieBoards = new ArrayList<>();
+        for (Long aLong : bestieId) {
+            List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, aLong);
+            bestieBoards.addAll(boards);
+        }
+        log.info("[findAll] Find all Boards List that User can see");
+
+        List<BoardResponseDto.BoardListDto> boardListDtos = new ArrayList<>();
+        boardListDtos.addAll(publicBoards.stream()
+                .map(BoardResponseDto.BoardListDto::toDto).toList());
+        boardListDtos.addAll(bestieBoards.stream()
+                .map(BoardResponseDto.BoardListDto::toDto)
+                .toList());
+
+        return boardListDtos;
+    }
+
+    public Scope updateScope(Long id, BoardRequestDto.BoardScopeUpdateDto boardScopeUpdateDto) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow((() -> new RuntimeException("게시판을 찾을 수 없습니다.")));
+        board.toUpdateScope(boardScopeUpdateDto.getScope());
+        return boardScopeUpdateDto.getScope();
     }
 }
