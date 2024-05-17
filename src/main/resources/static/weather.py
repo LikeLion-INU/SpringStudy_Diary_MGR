@@ -10,19 +10,19 @@ from urllib.request import urlopen
 
 data = sys.argv[1:]
 
-# info = '1'
-info = data[0]
-city = data[1]
-key = data[2]
-date = data[3]
+info = '1'
+# info = data[0]
+# city = data[1]
+# key = data[2]
+# date = data[3]
 
 weather = ""
 
 #오늘
 if info == '1':
-    # city = "인천"
-    # key = "c9ceb2f1e71d36dc3dbb5522352381ee"
-    # date = '2024-05-06'
+    city = "인천"
+    key = "c9ceb2f1e71d36dc3dbb5522352381ee"
+    date = '2024-05-18'
     
     tr = Translator()
     result = tr.translate(city)
@@ -34,9 +34,9 @@ if info == '1':
     json_file = json.loads(json_api)
 
     #지역, 날짜, 최저기온, 최고기온, 총강수량, 평균풍속, 평균운량
-    weather = json_file['weather']
+    weather_date = json_file['weather']
     stnNm = json_file['name']
-    main = weather[0]['main'] #기본
+    main = weather_date[0]['main'] #기본
     minTa = float(json_file['main']['temp_min']) -273.15
     maxTa = float(json_file['main']['temp_max']) -273.15
     json_str = json.dumps(data)
@@ -64,6 +64,11 @@ else:
     json_file = json.loads(json_api)
     print(json_file)
 
+    resultMsg = json_file['response']['header']['resultMsg']
+    if resultMsg != '':
+        print(resultMsg)
+        exit(1)
+
     weather_data = json_file['response']['body']['items']['item'][0]
     stnNm = weather_data['stnNm']
     date = weather_data['tm']
@@ -81,6 +86,8 @@ else:
     
 #지역, 날짜, 최저기온, 최고기온, 총강수량, 평균풍속, 평균운량
 print(tmp)
+
+
 if 10 <= avgTca <= 30:
     weather = "구름 조금"
 elif 30 < avgTca <= 60:
@@ -97,6 +104,6 @@ if sumRn != "":
         weather = "하루종일 비"
 
 if weather=="":
-    weather = "최고 " + str(maxTa) +"도로 맑음"
+    weather = "최고 " + str(round(maxTa,1)) +"도로 맑음"
     
 print(weather)
