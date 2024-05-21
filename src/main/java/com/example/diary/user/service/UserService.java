@@ -2,7 +2,11 @@ package com.example.diary.user.service;
 
 import com.example.diary.user.dto.UserRequestDTO;
 import com.example.diary.user.dto.UserResponseDTO;
+<<<<<<< HEAD
 import com.example.diary.user.domain.Users;
+=======
+import com.example.diary.user.entity.UserEntity;
+>>>>>>> ee555ed5055bb2c4aaef0da1b5e7611521ef330a
 import com.example.diary.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +19,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
 

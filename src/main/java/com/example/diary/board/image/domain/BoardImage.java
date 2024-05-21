@@ -1,4 +1,4 @@
-package com.example.diary.board.domain;
+package com.example.diary.board.image.domain;
 
 import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;
