@@ -3,7 +3,7 @@ package com.example.diary.board.domain;
 import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.image.domain.BoardImage;
 import com.example.diary.global.BaseEntity;
-import com.example.diary.user.entity.UserEntity;
+import com.example.diary.user.domain.Users;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +34,7 @@ public class Board extends BaseEntity {
     private int likeCnt = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private UserEntity user;
+    private Users user;
 
     public void toUpdateLike(int likeCnt){
         this.likeCnt = likeCnt;

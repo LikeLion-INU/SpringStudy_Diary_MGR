@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/main/java/com/example/diary/user/domain/Users.java
 package com.example.diary.user.domain;
-========
-package com.example.diary.user.entity;
->>>>>>>> ee555ed5055bb2c4aaef0da1b5e7611521ef330a:src/main/java/com/example/diary/user/entity/UserEntity.java
 
 import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;

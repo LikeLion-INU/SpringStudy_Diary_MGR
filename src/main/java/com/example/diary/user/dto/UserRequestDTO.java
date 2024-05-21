@@ -1,10 +1,6 @@
 package com.example.diary.user.dto;
 
-<<<<<<< HEAD
 import com.example.diary.user.domain.Users;
-=======
-import com.example.diary.user.entity.UserEntity;
->>>>>>> ee555ed5055bb2c4aaef0da1b5e7611521ef330a
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
