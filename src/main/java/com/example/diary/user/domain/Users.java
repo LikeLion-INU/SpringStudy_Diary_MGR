@@ -1,12 +1,13 @@
-package com.example.diary.user.entity;
+package com.example.diary.user.domain;
 
+import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "diary_user")
-public class UserEntity {
+@Table(name = "users")
+public class Users extends BaseEntity {
     //entity로 받은거 DTO 넣고, entity로 꺼낸거 DTO로 바꾸고
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +34,9 @@ public class UserEntity {
     @Column
     private String userMbti;
 
-    public UserEntity() {}
+    public Users() {}
 
-    public UserEntity(String userEmail, String password, String userNickname, String userGender, String userBirth, String userArea, String userMbti) {
+    public Users(String userEmail, String password, String userNickname, String userGender, String userBirth, String userArea, String userMbti) {
         this.userEmail = userEmail;
         this.password = password;
         this.userNickname = userNickname;

@@ -1,13 +1,13 @@
 package com.example.diary.user.repository;
 
-import com.example.diary.user.entity.UserEntity;
+import com.example.diary.user.domain.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByUserNickname(String userNickname);
-    Optional<UserEntity> findByUserEmail(String userEmail);
+public interface UserRepository extends JpaRepository<Users, Long> {
+    Optional<Users> findByUserNickname(String userNickname);
+    Optional<Users> findByUserEmail(String userEmail);
 }

@@ -1,6 +1,6 @@
 package com.example.diary.user.dto;
 
-import com.example.diary.user.entity.UserEntity;
+import com.example.diary.user.domain.Users;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,19 +19,19 @@ public class UserResponseDTO {
     
     public UserResponseDTO(){}
 
-    public static UserResponseDTO toUserDTO(UserEntity userEntity) {
+    public static UserResponseDTO toUserDTO(Users users) {
         UserResponseDTO userDTO = new UserResponseDTO();
-        userDTO.setId(userEntity.getId());
-        userDTO.setUserEmail(userEntity.getUserEmail());
-        userDTO.setUserNickname(userEntity.getUserNickname());
-        userDTO.setUserGender(userEntity.getUserGender());
-        userDTO.setUserBirth(userEntity.getUserBirth());
-        userDTO.setUserArea(userEntity.getUserArea());
-        userDTO.setUserMbti(userEntity.getUserMbti());
+        userDTO.setId(users.getId());
+        userDTO.setUserEmail(users.getUserEmail());
+        userDTO.setUserNickname(users.getUserNickname());
+        userDTO.setUserGender(users.getUserGender());
+        userDTO.setUserBirth(users.getUserBirth());
+        userDTO.setUserArea(users.getUserArea());
+        userDTO.setUserMbti(users.getUserMbti());
         return userDTO;
     }
 
-    public static UserResponseDTO toUserOptionalDTO(Optional<UserEntity> userEntity) {
+    public static UserResponseDTO toUserOptionalDTO(Optional<Users> userEntity) {
         UserResponseDTO userDTO = new UserResponseDTO();
         userDTO.setId(userEntity.get().getId());
         userDTO.setUserEmail(userEntity.get().getUserEmail());
