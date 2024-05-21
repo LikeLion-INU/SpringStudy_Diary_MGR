@@ -2,7 +2,7 @@ package com.example.diary.board.like.domain;
 
 import com.example.diary.board.domain.Board;
 import com.example.diary.global.BaseEntity;
-import com.example.diary.user.entity.UserEntity;
+import com.example.diary.user.domain.Users;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +22,6 @@ public class Like extends BaseEntity {
     private Board board;
 
     @OneToOne(fetch = FetchType.EAGER)
-    private UserEntity user;
+    private Users user;
 
 }

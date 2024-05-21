@@ -5,7 +5,7 @@ import com.example.diary.board.dto.BoardRequestDto;
 import com.example.diary.board.like.domain.Like;
 import com.example.diary.board.like.repository.LikeRepository;
 import com.example.diary.board.repository.BoardRepository;
-import com.example.diary.user.entity.UserEntity;
+import com.example.diary.user.domain.Users;
 import com.example.diary.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class LikeService {
 //        Long userId = (Long) httpSession.getAttribute("user");
         Long userId = (long)1;
         //todo 유저 세션 값 가져오기
-        UserEntity user = userRepository.findById(userId)
+        Users user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
         Board board = boardRepository.findById(id)
              .orElseThrow(RuntimeException::new);
