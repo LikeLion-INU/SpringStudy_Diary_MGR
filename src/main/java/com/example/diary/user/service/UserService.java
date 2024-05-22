@@ -19,11 +19,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     //회원가입
-    public UserRequestDTO save(UserRequestDTO userRequestDTO) {
-        //회원가입 dto -> entitiy
+    public UserResponseDTO save(UserRequestDTO userRequestDTO) {
         Users user = UserRequestDTO.toSaveEntity(userRequestDTO);
         userRepository.save(user);
-        return userRequestDTO;
+        return UserResponseDTO.toUserDTO(user);
     }
 
     //회원조회(전체)
