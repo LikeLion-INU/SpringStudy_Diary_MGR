@@ -126,4 +126,9 @@ public class UserController {
     }
 
     // 친구 삭제
+    @PostMapping("/user/friend/deleteFriend/{id}")
+    public ResponseEntity<?> deleteFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        String receiver = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(userService.deleteFriend(id, receiver));
+    }
 }

@@ -53,11 +53,10 @@ public class UserService {
         } else return null;
     }
 
+    // 회원 삭제
     @Transactional
     public UserResponseDTO deleteUser(Long id) {
         Optional<Users> userEntity = userRepository.findById(id);
-
-        log.info(userEntity.toString());
 
         if (userEntity.isPresent()) {
             Users user = userEntity.get();
@@ -66,6 +65,7 @@ public class UserService {
         } else return null;
     }
 
+    // 로그인
     public UserResponseDTO login(UserRequestDTO userRequestDTO) {
         Optional<Users> byUserEmail = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
 
@@ -128,4 +128,15 @@ public class UserService {
     }
 
     // 친구 삭제
+    @Transactional
+    public String deleteFriend(Long id, String receiver) {
+        Optional<Users> res = userRepository.findById(id);
+
+        if (res.isPresent()) {
+            String follower = res.get().getUserNickname();
+            friendRepository.deleteByFollowerAndReceiver(follower, receiver);
+
+            return "Delete Success";
+        } else return null;
+    }
 }
