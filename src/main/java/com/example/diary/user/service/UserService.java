@@ -117,9 +117,10 @@ public class UserService {
         } else return null;
     }
 
-
     // 친구 조회
-
+    public List<Friend> searchFriend(String nickname) {
+        return friendRepository.findByFollowerAndAccept(nickname, "Y");
+    }
     // 친구 요청 내역 (내가 요청한 내역)
 
     // 친구 삭제

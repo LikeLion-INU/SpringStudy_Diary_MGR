@@ -110,6 +110,12 @@ public class UserController {
     }
 
     // 친구 조회
+    @PostMapping("/user/friend/searchFriend")
+    public ResponseEntity<?> searchFriend(@RequestBody UserRequestDTO userRequestDTO) {
+        String nickname = userRequestDTO.getUserNickname();
+        // 닉네임으로 조회 (ACCEPT 값이 Y인 것만)
+        return ResponseEntity.ok().body(userService.searchFriend(nickname));
+    }
 
     // 친구 요청 내역 (내가 요청한 내역)
 
