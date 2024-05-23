@@ -31,15 +31,15 @@ public class UserResponseDTO {
         return userDTO;
     }
 
-    public static UserResponseDTO toUserOptionalDTO(Optional<Users> userEntity) {
+    public static UserResponseDTO toUserOptionalDTO(Optional<Users> users) {
         UserResponseDTO userDTO = new UserResponseDTO();
-        userDTO.setId(userEntity.get().getId());
-        userDTO.setUserEmail(userEntity.get().getUserEmail());
-        userDTO.setUserNickname(userEntity.get().getUserNickname());
-        userDTO.setUserGender(userEntity.get().getUserGender());
-        userDTO.setUserBirth(userEntity.get().getUserBirth());
-        userDTO.setUserArea(userEntity.get().getUserArea());
-        userDTO.setUserMbti(userEntity.get().getUserMbti());
+        userDTO.setId(users.get().getId());
+        userDTO.setUserEmail(users.get().getUserEmail());
+        userDTO.setUserNickname(users.get().getUserNickname());
+        userDTO.setUserGender(users.get().getUserGender());
+        userDTO.setUserBirth(users.get().getUserBirth());
+        userDTO.setUserArea(users.get().getUserArea());
+        userDTO.setUserMbti(users.get().getUserMbti());
         return userDTO;
     }
 }

@@ -2,8 +2,10 @@ package com.example.diary.user.domain;
 
 import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name="friend")
 public class Friend extends BaseEntity {
     @Id
@@ -18,4 +20,18 @@ public class Friend extends BaseEntity {
 
     @Column
     private String accept;
+
+    public Friend() {}
+
+    public Friend(String follower, String receiver, String accept) {
+        this.follower = follower;
+        this.receiver = receiver;
+        this.accept = accept;
+    }
+
+    public void acceptFriend(String follower, String receiver, String accept) {
+        this.follower = follower;
+        this.receiver = receiver;
+        this.accept = accept;
+    }
 }

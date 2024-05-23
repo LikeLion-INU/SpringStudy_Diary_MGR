@@ -82,4 +82,53 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(userService.deleteUser(id));
     }
+
+    // 친구 요청
+    // 친구 요청 건 사람 follower & 받은 사람 receiver
+    @PostMapping("/user/friend/requestFriend/{id}")
+    public ResponseEntity<?> requestFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        // id -> follower, nickname -> receiver
+        String nickname = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(userService.requestFriend(id, nickname));
+    }
+
+    // 요청 건 친구 조회
+    @PostMapping("/user/friend/searchRequestFriend")
+    public ResponseEntity<?> searchRequestFriend(@RequestBody UserRequestDTO userRequestDTO) {
+        String nickname = userRequestDTO.getUserNickname();
+        // 닉네임으로 조회 (요청 건 내역만)
+        return ResponseEntity.ok().body(userService.searchRequestFriend(nickname));
+    }
+
+    // 요청 받은 친구 조회
+    @PostMapping("/user/friend/searchReceiveFriend")
+    public ResponseEntity<?> searchReceiveFriend(@RequestBody UserRequestDTO userRequestDTO) {
+        String nickname = userRequestDTO.getUserNickname();
+        // 닉네임으로 조회 (요청 받은 내역만)
+        return ResponseEntity.ok().body(userService.searchReceiveFriend(nickname));
+    }
+
+    // 친구 요청 승인
+    @PostMapping("/user/friend/acceptFriend/{id}")
+    public ResponseEntity<?> acceptFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        // id -> follower, nickname -> receiver
+        String receiver = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(userService.acceptFriend(id, receiver));
+        //return null;
+    }
+
+    // 친구 조회
+    @PostMapping("/user/friend/searchFriend")
+    public ResponseEntity<?> searchFriend(@RequestBody UserRequestDTO userRequestDTO) {
+        String nickname = userRequestDTO.getUserNickname();
+        // 닉네임으로 조회 (ACCEPT 값이 Y인 것만)
+        return ResponseEntity.ok().body(userService.searchFriend(nickname));
+    }
+
+    // 친구 삭제
+    @PostMapping("/user/friend/deleteFriend/{id}")
+    public ResponseEntity<?> deleteFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        String receiver = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(userService.deleteFriend(id, receiver));
+    }
 }
