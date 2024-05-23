@@ -21,7 +21,7 @@ public class FriendRequestDTO {
         this.accept = accept;
     }
 
-    //회원가입
+    // 친구 요청
     public static Friend toRequestFriend(FriendRequestDTO friendRequestDTO) {
         String follower = friendRequestDTO.getFollower();
         String receiver = friendRequestDTO.getReceiver();
