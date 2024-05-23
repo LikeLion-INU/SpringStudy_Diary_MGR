@@ -82,4 +82,14 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(userService.deleteUser(id));
     }
+
+    // 친구 요청
+    // 친구 요청 건 사람 follower & 받은 사람 receiver
+    @PostMapping("/user/friend/requestFriend/{id}")
+    public ResponseEntity<?> requestFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        log.info("친구 요청");
+        log.info("follower의 id 값 : " + id + ", user : " + userRequestDTO.getUserNickname());
+        String nickname = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(userService.requestFriend(id, nickname));
+    }
 }

@@ -1,8 +1,11 @@
 package com.example.diary.user.service;
 
+import com.example.diary.user.domain.Friend;
+import com.example.diary.user.dto.FriendResponseDTO;
 import com.example.diary.user.dto.UserRequestDTO;
 import com.example.diary.user.dto.UserResponseDTO;
 import com.example.diary.user.domain.Users;
+import com.example.diary.user.repository.FriendRepository;
 import com.example.diary.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final FriendRepository friendRepository;
 
     //회원가입
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
@@ -73,5 +77,20 @@ public class UserService {
                 return UserResponseDTO.toUserDTO(users);
             } else return null;
         } else return null;
+    }
+
+    // 친구 요청
+    public FriendResponseDTO requestFriend(Long id, String receiver) {
+        Optional<Users> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            String follower = user.get().getUserNickname();
+
+            Friend friend = new Friend(follower, receiver, "N");
+            friendRepository.save(friend);
+
+            return FriendResponseDTO.toFriendDTO(friend);
+        } else return null;
+
     }
 }
