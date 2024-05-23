@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findByFollower(String nickname);
+    List<Friend> findByReceiver(String nickname);
     List<Friend> findByFollowerAndAccept(String nickname, String accept);
     Optional<Friend> findByFollowerAndReceiver(String follower, String receiver);
 }

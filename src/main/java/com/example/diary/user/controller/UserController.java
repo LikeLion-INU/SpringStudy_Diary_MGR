@@ -92,12 +92,20 @@ public class UserController {
         return ResponseEntity.ok().body(userService.requestFriend(id, nickname));
     }
 
-    // 받은 친구 요청 조회
+    // 요청 건 친구 조회
     @PostMapping("/user/friend/searchRequestFriend")
     public ResponseEntity<?> searchRequestFriend(@RequestBody UserRequestDTO userRequestDTO) {
         String nickname = userRequestDTO.getUserNickname();
-        // 닉네임으로 조회 (받은 요청 내역만)
+        // 닉네임으로 조회 (요청 건 내역만)
         return ResponseEntity.ok().body(userService.searchRequestFriend(nickname));
+    }
+
+    // 요청 받은 친구 조회
+    @PostMapping("/user/friend/searchReceiveFriend")
+    public ResponseEntity<?> searchReceiveFriend(@RequestBody UserRequestDTO userRequestDTO) {
+        String nickname = userRequestDTO.getUserNickname();
+        // 닉네임으로 조회 (요청 받은 내역만)
+        return ResponseEntity.ok().body(userService.searchReceiveFriend(nickname));
     }
 
     // 친구 요청 승인
@@ -116,8 +124,6 @@ public class UserController {
         // 닉네임으로 조회 (ACCEPT 값이 Y인 것만)
         return ResponseEntity.ok().body(userService.searchFriend(nickname));
     }
-
-    // 친구 요청 내역 (내가 요청한 내역)
 
     // 친구 삭제
 }
