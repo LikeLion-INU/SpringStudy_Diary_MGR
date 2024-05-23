@@ -99,6 +99,24 @@ public class UserService {
     }
 
     // 친구 요청 승인
+    @Transactional
+    public FriendResponseDTO acceptFriend(Long id, String receiver) {
+        Optional<Users> users = userRepository.findById(id);
+
+        if (users.isPresent()) {
+            String follower = users.get().getUserNickname();
+            Optional<Friend> res = friendRepository.findByFollowerAndReceiver(follower, receiver);
+
+            if (res.isPresent()) {
+                String accept = "Y";
+                Friend friend = res.get();
+                friend.acceptFriend(follower, receiver, accept);
+
+                return FriendResponseDTO.toAcceptFriendDTO(friend);
+            } else return null;
+        } else return null;
+    }
+
 
     // 친구 조회
 

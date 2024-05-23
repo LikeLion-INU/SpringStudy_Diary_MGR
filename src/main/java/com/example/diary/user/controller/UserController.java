@@ -104,10 +104,9 @@ public class UserController {
     @PostMapping("/user/friend/acceptFriend/{id}")
     public ResponseEntity<?> acceptFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
         // id -> follower, nickname -> receiver
-
-        String nickname = userRequestDTO.getUserNickname();
-        //
-        return null;
+        String receiver = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(userService.acceptFriend(id, receiver));
+        //return null;
     }
 
     // 친구 조회

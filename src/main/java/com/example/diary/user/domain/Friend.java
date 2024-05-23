@@ -28,4 +28,10 @@ public class Friend extends BaseEntity {
         this.receiver = receiver;
         this.accept = accept;
     }
+
+    public void acceptFriend(String follower, String receiver, String accept) {
+        this.follower = follower;
+        this.receiver = receiver;
+        this.accept = accept;
+    }
 }
