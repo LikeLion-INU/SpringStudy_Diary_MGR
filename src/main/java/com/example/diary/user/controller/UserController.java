@@ -87,9 +87,32 @@ public class UserController {
     // 친구 요청 건 사람 follower & 받은 사람 receiver
     @PostMapping("/user/friend/requestFriend/{id}")
     public ResponseEntity<?> requestFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
-        log.info("친구 요청");
-        log.info("follower의 id 값 : " + id + ", user : " + userRequestDTO.getUserNickname());
+        // id -> follower, nickname -> receiver
         String nickname = userRequestDTO.getUserNickname();
         return ResponseEntity.ok().body(userService.requestFriend(id, nickname));
     }
+
+    // 받은 친구 요청 조회
+    @PostMapping("/user/friend/searchRequestFriend")
+    public ResponseEntity<?> searchRequestFriend(@RequestBody UserRequestDTO userRequestDTO) {
+        String nickname = userRequestDTO.getUserNickname();
+        // 닉네임으로 조회 (받은 요청 내역만)
+        return ResponseEntity.ok().body(userService.searchRequestFriend(nickname));
+    }
+
+    // 친구 요청 승인
+    @PostMapping("/user/friend/acceptFriend/{id}")
+    public ResponseEntity<?> acceptFriend(@PathVariable("id") Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        // id -> follower, nickname -> receiver
+
+        String nickname = userRequestDTO.getUserNickname();
+        //
+        return null;
+    }
+
+    // 친구 조회
+
+    // 친구 요청 내역 (내가 요청한 내역)
+
+    // 친구 삭제
 }

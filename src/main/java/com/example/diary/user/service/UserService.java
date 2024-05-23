@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -93,4 +92,17 @@ public class UserService {
         } else return null;
 
     }
+
+    // 받은 친구 요청 조회
+    public List<Friend> searchRequestFriend(String nickname) {
+        return friendRepository.findByFollower(nickname);
+    }
+
+    // 친구 요청 승인
+
+    // 친구 조회
+
+    // 친구 요청 내역 (내가 요청한 내역)
+
+    // 친구 삭제
 }
