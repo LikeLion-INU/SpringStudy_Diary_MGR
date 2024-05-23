@@ -34,7 +34,6 @@ public class FriendService {
 
             return FriendResponseDTO.toFriendDTO(friend);
         } else return null;
-
     }
 
     // 요청 건 친구 조회

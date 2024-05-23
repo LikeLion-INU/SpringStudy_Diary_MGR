@@ -1,5 +1,6 @@
-package com.example.diary.domain.user.domain;
+package com.example.diary.domain.bestie.domain;
 
+import com.example.diary.domain.user.domain.Users;
 import com.example.diary.global.BaseEntity;
 import jakarta.persistence.*;
 
