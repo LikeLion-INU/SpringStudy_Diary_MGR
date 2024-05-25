@@ -54,6 +54,7 @@ public class BestieService {
         } else return null;
     }
 
+    // 친한 친구 삭제
     @Transactional
     public String deleteBestie(Long id, String bestie) {
         bestieRepository.deleteByIdAndBestie(id, bestie);

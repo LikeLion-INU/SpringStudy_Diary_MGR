@@ -19,7 +19,19 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final FriendRepository friendRepository;
+
+    // 로그인
+    public UserResponseDTO login(UserRequestDTO userRequestDTO) {
+        Optional<Users> byUserEmail = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
+
+        if (byUserEmail.isPresent()) {
+            Users users = byUserEmail.get();
+
+            if (users.getPassword().equals(userRequestDTO.getPassword())) {
+                return UserResponseDTO.toUserDTO(users);
+            } else return null;
+        } else return null;
+    }
 
     //회원가입
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
@@ -62,19 +74,6 @@ public class UserService {
             Users user = userEntity.get();
             userRepository.deleteById(user.getId());
             return UserResponseDTO.toUserDTO(user);
-        } else return null;
-    }
-
-    // 로그인
-    public UserResponseDTO login(UserRequestDTO userRequestDTO) {
-        Optional<Users> byUserEmail = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
-
-        if (byUserEmail.isPresent()) {
-            Users users = byUserEmail.get();
-
-            if (users.getPassword().equals(userRequestDTO.getPassword())) {
-                return UserResponseDTO.toUserDTO(users);
-            } else return null;
         } else return null;
     }
 }
