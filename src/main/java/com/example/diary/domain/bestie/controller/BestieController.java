@@ -26,4 +26,13 @@ public class BestieController {
         String bestie = userRequestDTO.getUserNickname();
         return ResponseEntity.ok().body(bestieService.setBestie(id, bestie));
     }
+
+    // 친한 친구 조회 (pk, 이름 return)
+    @PostMapping("/bestie/searchBestie")
+    public ResponseEntity<?> searchBestie() {
+        Long id = (Long) httpSession.getAttribute("userId");
+        return ResponseEntity.ok().body(bestieService.searchBestie(id));
+    }
+
+    // 친한 친구 삭제
 }

@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,12 +32,25 @@ public class BestieService {
         Optional<Users> user = userRepository.findById(id);
 
         if (user.isPresent()) {
-            Users nickname = user.get();
+            Users userInfo = user.get();
 
-            Bestie bestie = new Bestie(nickname, bestieNickname);
+            Bestie bestie = new Bestie(userInfo, bestieNickname);
             bestieRepository.save(bestie);
 
             return BestieResponseDTO.toBestieDTO(bestie);
+        } else return null;
+    }
+
+    // 친한 친구 조회 (세션 ID 값 기준)
+    public List<BestieResponseDTO> searchBestie(Long id) {
+        Optional<Users> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            Users userInfo = user.get();
+            List<Bestie> bestieList = bestieRepository.findByUsers(userInfo);
+            return bestieList.stream()
+                    .map(m -> BestieResponseDTO.toSearchBestieDTO(m.getId(), m.getBestie(), m.getUsers().getId().toString()))
+                    .collect(Collectors.toList());
         } else return null;
     }
 }
