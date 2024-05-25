@@ -22,34 +22,14 @@ public class UserController {
     // 로그인
     @PostMapping("/user/login")
     public ResponseEntity<?> login (@RequestBody UserRequestDTO userRequestDTO, HttpSession session) {
-        UserResponseDTO user = userService.login(userRequestDTO);
-
-        if (user != null) {
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("userEmail", user.getUserEmail());
-            session.setAttribute("userName", user.getUserNickname());
-
-            return ResponseEntity.ok().body(user);
-        } else {
-            log.info("로그인 실패");
-
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Login Fail");
-            return ResponseEntity.ok().body(response);
-        }
+        return ResponseEntity.ok().body(userService.login(userRequestDTO, session));
     }
 
     // 로그아웃
     @PostMapping("/user/logout")
     public ResponseEntity<?> logout (HttpServletRequest request){
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate(); // 세션 무효화
-
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "LogOut");
-            return ResponseEntity.ok().body(response);
-        } else return null;
+        userService.logout(request);
+        return ResponseEntity.ok().body("Logout");
     }
 
     //회원가입
@@ -61,7 +41,6 @@ public class UserController {
     //회원 정보 조회 (전체)
     @GetMapping("/user/searchAllUser")
     public ResponseEntity<?> searchAllUser() {
-        log.info("회원 정보 조회");
         return ResponseEntity.ok().body(userService.getAllUser());
     }
 
@@ -74,7 +53,6 @@ public class UserController {
     //회원 정보 수정
     @PostMapping("/user/editUser")
     public ResponseEntity<?> editUser(@RequestBody UserRequestDTO userRequestDTO) {
-        log.info("회원 정보 수정");
         return ResponseEntity.ok().body(userService.editUser(userRequestDTO));
     }
 
