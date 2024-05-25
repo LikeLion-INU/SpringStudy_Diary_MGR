@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface BestieRepository extends JpaRepository<Bestie, Long> {
     List<Bestie> findByUsers(Users users);
+    void deleteByIdAndBestie(Long id, String bestie);
 }

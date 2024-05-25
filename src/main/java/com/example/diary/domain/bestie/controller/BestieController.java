@@ -35,4 +35,10 @@ public class BestieController {
     }
 
     // 친한 친구 삭제
+    @PostMapping("/bestie/deleteBestie")
+    public ResponseEntity<?> deleteBestie(@RequestBody UserRequestDTO userRequestDTO) {
+        Long id = (Long) httpSession.getAttribute("userId");
+        String bestie = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(bestieService.deleteBestie(id, bestie));
+    }
 }

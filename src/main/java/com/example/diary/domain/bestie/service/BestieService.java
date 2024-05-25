@@ -53,4 +53,10 @@ public class BestieService {
                     .collect(Collectors.toList());
         } else return null;
     }
+
+    @Transactional
+    public String deleteBestie(Long id, String bestie) {
+        bestieRepository.deleteByIdAndBestie(id, bestie);
+        return "Delete Success";
+    }
 }
