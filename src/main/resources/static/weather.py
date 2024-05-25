@@ -10,19 +10,19 @@ from urllib.request import urlopen
 
 data = sys.argv[1:]
 
-info = '1'
-# info = data[0]
-# city = data[1]
-# key = data[2]
-# date = data[3]
+# info = '1'
+info = data[0]
+city = data[1]
+key = data[2]
+date = data[3]
 
 weather = ""
 
 #오늘
 if info == '1':
-    city = "인천"
-    key = "c9ceb2f1e71d36dc3dbb5522352381ee"
-    date = '2024-05-18'
+    # city = "인천"
+    # key = "c9ceb2f1e71d36dc3dbb5522352381ee"
+    # date = '2024-05-18'
     
     tr = Translator()
     result = tr.translate(city)
