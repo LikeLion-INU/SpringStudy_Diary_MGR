@@ -1,14 +1,13 @@
 package com.example.diary.domain.user.service;
 
-import com.example.diary.domain.bestie.dto.BestieResponseDTO;
 import com.example.diary.domain.bestie.repository.BestieRepository;
-import com.example.diary.domain.friend.domain.Friend;
 import com.example.diary.domain.user.domain.Users;
-import com.example.diary.domain.friend.dto.FriendResponseDTO;
 import com.example.diary.domain.user.dto.UserRequestDTO;
 import com.example.diary.domain.user.dto.UserResponseDTO;
 import com.example.diary.domain.friend.repository.FriendRepository;
 import com.example.diary.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,16 +24,35 @@ public class UserService {
     private final BestieRepository bestieRepository;
 
     // 로그인
-    public UserResponseDTO login(UserRequestDTO userRequestDTO) {
-        Optional<Users> byUserEmail = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
+    public UserResponseDTO login(UserRequestDTO userRequestDTO, HttpSession session) {
+        Optional<Users> user = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
 
-        if (byUserEmail.isPresent()) {
-            Users users = byUserEmail.get();
+        if (user.isPresent()) {
+            // 세션 값 저장
+            session.setAttribute("userId", user.get().getId());
+            session.setAttribute("userEmail", user.get().getUserEmail());
+            session.setAttribute("userName", user.get().getUserNickname());
 
+            // 비밀번호 일치 하면 로그인 성공
+            Users users = user.get();
             if (users.getPassword().equals(userRequestDTO.getPassword())) {
                 return UserResponseDTO.toUserDTO(users);
-            } else return null;
-        } else return null;
+            } else {
+                log.info("Password Error!");
+                return null;
+            }
+        } else {
+            log.info("User Not Found!");
+            return null;
+        }
+    }
+
+    // 로그아웃
+    public void logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); // 세션 무효화
+        }
     }
 
     //회원가입
