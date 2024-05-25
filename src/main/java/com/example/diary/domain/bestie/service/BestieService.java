@@ -58,6 +58,6 @@ public class BestieService {
     @Transactional
     public String deleteBestie(Long id, String bestie) {
         bestieRepository.deleteByIdAndBestie(id, bestie);
-        return "Delete Success";
+        return "Bestie Delete Success";
     }
 }

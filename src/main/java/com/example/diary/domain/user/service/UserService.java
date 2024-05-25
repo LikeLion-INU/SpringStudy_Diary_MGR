@@ -1,5 +1,7 @@
 package com.example.diary.domain.user.service;
 
+import com.example.diary.domain.bestie.dto.BestieResponseDTO;
+import com.example.diary.domain.bestie.repository.BestieRepository;
 import com.example.diary.domain.friend.domain.Friend;
 import com.example.diary.domain.user.domain.Users;
 import com.example.diary.domain.friend.dto.FriendResponseDTO;
@@ -19,6 +21,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final FriendRepository friendRepository;
+    private final BestieRepository bestieRepository;
 
     // 로그인
     public UserResponseDTO login(UserRequestDTO userRequestDTO) {
@@ -67,13 +71,20 @@ public class UserService {
 
     // 회원 삭제
     @Transactional
-    public UserResponseDTO deleteUser(Long id) {
+    public String deleteUser(Long id) {
         Optional<Users> userEntity = userRepository.findById(id);
 
         if (userEntity.isPresent()) {
             Users user = userEntity.get();
+
+            // FRIEND, BESTIE 테이블에 존재하는 회원 삭제
+            friendRepository.deleteByFollowerOrReceiver(user.getUserNickname(), user.getUserNickname());
+            bestieRepository.deleteByUsers(user);
+            bestieRepository.deleteByBestie(user.getUserNickname());
+
+            // USERS 테이블에 존재하는 회원 삭제
             userRepository.deleteById(user.getId());
-            return UserResponseDTO.toUserDTO(user);
-        } else return null;
+            return "User Delete Success";
+        } else return "User Delete Fail";
     }
 }

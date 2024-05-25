@@ -14,4 +14,5 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findByFollowerAndAccept(String nickname, String accept);
     Optional<Friend> findByFollowerAndReceiver(String follower, String receiver);
     void deleteByFollowerAndReceiver(String follower, String receiver);
+    void deleteByFollowerOrReceiver(String follower, String receiver);
 }
