@@ -19,9 +19,11 @@ public class BestieController {
     private final HttpSession httpSession;
 
     // 친한 친구 설정
-    @PostMapping("//bestie/requestBestie")
-    public ResponseEntity<?> requestBestie() {
-
-        return null;
+    @PostMapping("/bestie/setBestie")
+    public ResponseEntity<?> requestBestie(@RequestBody UserRequestDTO userRequestDTO) {
+        // 내 id 값, 친친으로 설정할 상대 닉네임
+        Long id = (Long) httpSession.getAttribute("userId");
+        String bestie = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(bestieService.setBestie(id, bestie));
     }
 }
