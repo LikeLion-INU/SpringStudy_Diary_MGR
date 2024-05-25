@@ -19,9 +19,26 @@ public class BestieController {
     private final HttpSession httpSession;
 
     // 친한 친구 설정
-    @PostMapping("//bestie/requestBestie")
-    public ResponseEntity<?> requestBestie() {
+    @PostMapping("/bestie/setBestie")
+    public ResponseEntity<?> requestBestie(@RequestBody UserRequestDTO userRequestDTO) {
+        // 내 id 값, 친친으로 설정할 상대 닉네임
+        Long id = (Long) httpSession.getAttribute("userId");
+        String bestie = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(bestieService.setBestie(id, bestie));
+    }
 
-        return null;
+    // 친한 친구 조회 (pk, 이름 return)
+    @PostMapping("/bestie/searchBestie")
+    public ResponseEntity<?> searchBestie() {
+        Long id = (Long) httpSession.getAttribute("userId");
+        return ResponseEntity.ok().body(bestieService.searchBestie(id));
+    }
+
+    // 친한 친구 삭제
+    @PostMapping("/bestie/deleteBestie")
+    public ResponseEntity<?> deleteBestie(@RequestBody UserRequestDTO userRequestDTO) {
+        Long id = (Long) httpSession.getAttribute("userId");
+        String bestie = userRequestDTO.getUserNickname();
+        return ResponseEntity.ok().body(bestieService.deleteBestie(id, bestie));
     }
 }

@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 @Table(name = "users")
 public class Users extends BaseEntity {
-    //entity로 받은거 DTO 넣고, entity로 꺼낸거 DTO로 바꾸고
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -72,11 +72,4 @@ public class FriendController {
         String receiver = userRequestDTO.getUserNickname();
         return ResponseEntity.ok().body(friendService.deleteFriend(id, receiver));
     }
-
-    // 친한 친구 설정
-    @PostMapping("/user/friend/bestie/requestBestie")
-    public ResponseEntity<?> requestBestie() {
-
-        return null;
-    }
 }

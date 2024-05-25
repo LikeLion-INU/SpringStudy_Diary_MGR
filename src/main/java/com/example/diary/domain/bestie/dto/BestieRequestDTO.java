@@ -11,11 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BestieRequestDTO {
     protected Long id;
-    protected String userid;
+    protected String userNickname;
     protected String bestie;
 
-    public BestieRequestDTO(String userid, String bestie) {
-        this.userid = userid;
-        this.bestie = bestie;
-    }
+//    public BestieRequestDTO(String userid, String bestie) {
+//        this.userid = userid;
+//        this.bestie = bestie;
+//    }
 }

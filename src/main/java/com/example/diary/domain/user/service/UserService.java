@@ -1,5 +1,7 @@
 package com.example.diary.domain.user.service;
 
+import com.example.diary.domain.bestie.dto.BestieResponseDTO;
+import com.example.diary.domain.bestie.repository.BestieRepository;
 import com.example.diary.domain.friend.domain.Friend;
 import com.example.diary.domain.user.domain.Users;
 import com.example.diary.domain.friend.dto.FriendResponseDTO;
@@ -20,6 +22,20 @@ import java.util.*;
 public class UserService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final BestieRepository bestieRepository;
+
+    // 로그인
+    public UserResponseDTO login(UserRequestDTO userRequestDTO) {
+        Optional<Users> byUserEmail = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
+
+        if (byUserEmail.isPresent()) {
+            Users users = byUserEmail.get();
+
+            if (users.getPassword().equals(userRequestDTO.getPassword())) {
+                return UserResponseDTO.toUserDTO(users);
+            } else return null;
+        } else return null;
+    }
 
     //회원가입
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
@@ -55,88 +71,20 @@ public class UserService {
 
     // 회원 삭제
     @Transactional
-    public UserResponseDTO deleteUser(Long id) {
+    public String deleteUser(Long id) {
         Optional<Users> userEntity = userRepository.findById(id);
 
         if (userEntity.isPresent()) {
             Users user = userEntity.get();
+
+            // FRIEND, BESTIE 테이블에 존재하는 회원 삭제
+            friendRepository.deleteByFollowerOrReceiver(user.getUserNickname(), user.getUserNickname());
+            bestieRepository.deleteByUsers(user);
+            bestieRepository.deleteByBestie(user.getUserNickname());
+
+            // USERS 테이블에 존재하는 회원 삭제
             userRepository.deleteById(user.getId());
-            return UserResponseDTO.toUserDTO(user);
-        } else return null;
-    }
-
-    // 로그인
-    public UserResponseDTO login(UserRequestDTO userRequestDTO) {
-        Optional<Users> byUserEmail = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
-
-        if (byUserEmail.isPresent()) {
-            Users users = byUserEmail.get();
-
-            if (users.getPassword().equals(userRequestDTO.getPassword())) {
-                return UserResponseDTO.toUserDTO(users);
-            } else return null;
-        } else return null;
-    }
-
-    // 친구 요청
-    public FriendResponseDTO requestFriend(Long id, String receiver) {
-        Optional<Users> user = userRepository.findById(id);
-
-        if (user.isPresent()) {
-            String follower = user.get().getUserNickname();
-
-            Friend friend = new Friend(follower, receiver, "N");
-            friendRepository.save(friend);
-
-            return FriendResponseDTO.toFriendDTO(friend);
-        } else return null;
-
-    }
-
-    // 요청 건 친구 조회
-    public List<Friend> searchRequestFriend(String nickname) {
-        return friendRepository.findByFollower(nickname);
-    }
-
-    // 요청 받은 친구 조회
-    public List<Friend> searchReceiveFriend(String nickname) {
-        return friendRepository.findByReceiver(nickname);
-    }
-
-    // 친구 요청 승인
-    @Transactional
-    public FriendResponseDTO acceptFriend(Long id, String receiver) {
-        Optional<Users> users = userRepository.findById(id);
-
-        if (users.isPresent()) {
-            String follower = users.get().getUserNickname();
-            Optional<Friend> res = friendRepository.findByFollowerAndReceiver(follower, receiver);
-
-            if (res.isPresent()) {
-                String accept = "Y";
-                Friend friend = res.get();
-                friend.acceptFriend(follower, receiver, accept);
-
-                return FriendResponseDTO.toAcceptFriendDTO(friend);
-            } else return null;
-        } else return null;
-    }
-
-    // 친구 조회
-    public List<Friend> searchFriend(String nickname) {
-        return friendRepository.findByFollowerAndAccept(nickname, "Y");
-    }
-
-    // 친구 삭제
-    @Transactional
-    public String deleteFriend(Long id, String receiver) {
-        Optional<Users> res = userRepository.findById(id);
-
-        if (res.isPresent()) {
-            String follower = res.get().getUserNickname();
-            friendRepository.deleteByFollowerAndReceiver(follower, receiver);
-
-            return "Delete Success";
-        } else return null;
+            return "User Delete Success";
+        } else return "User Delete Fail";
     }
 }
