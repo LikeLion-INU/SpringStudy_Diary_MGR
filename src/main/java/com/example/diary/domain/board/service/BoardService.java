@@ -1,5 +1,6 @@
 package com.example.diary.domain.board.service;
 
+import com.example.diary.domain.bestie.repository.BestieRepository;
 import com.example.diary.domain.board.domain.Board;
 import com.example.diary.domain.image.domain.BoardImage;
 import com.example.diary.domain.board.domain.Scope;
@@ -9,6 +10,8 @@ import com.example.diary.domain.image.dto.BoardImageRequestDto;
 import com.example.diary.domain.image.dto.BoardImageResponseDto;
 import com.example.diary.domain.image.repository.BoardImageRepository;
 import com.example.diary.domain.board.repository.BoardRepository;
+import com.example.diary.domain.user.domain.Users;
+import com.example.diary.domain.user.repository.UserRepository;
 import com.example.diary.global.DateService;
 import com.example.diary.domain.weather.service.WeatherService;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +31,8 @@ public class BoardService implements BoardServiceImpl{
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
+    private final BestieRepository bestieRepository;
+    private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
     private final HttpSession httpSession;
     @Override
@@ -40,9 +45,8 @@ public class BoardService implements BoardServiceImpl{
 
     @Override
     public List<BoardResponseDto.BoardListDto> findAll() {
-//        User user = httpSession.getAttribute("user");
-        //todo 유저까지 반영
-        List<Board> boards = boardRepository.findAll();
+        Long userId = (Long) httpSession.getAttribute("userId");
+        List<Board> boards = boardRepository.findAllByUserId(userId);
         log.info("[findAll] Find all Boards List");
         return boards.stream()
                 .map(BoardResponseDto.BoardListDto::toDto)
@@ -94,7 +98,7 @@ public class BoardService implements BoardServiceImpl{
 
     }
 
-    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
+    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto){
         Board board = boardRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         board.toUpdateBoard(boardUpdateDto);
@@ -103,8 +107,8 @@ public class BoardService implements BoardServiceImpl{
     }
 
     private Board insertBoard(BoardRequestDto boardRequestDto) throws IOException {
-//        User user = httpSession.getAttribute("user");
-        Board board = boardRepository.findByDate(DateService.strToDate(boardRequestDto.getDate()));
+        Long userId = (Long) httpSession.getAttribute("userId");
+        Board board = boardRepository.findByDateAndUserId(DateService.strToDate(boardRequestDto.getDate()), userId);
         if (board == null) {
             BoardImage boardImage = null;
             if (boardRequestDto.getImage() != null) {
@@ -117,6 +121,8 @@ public class BoardService implements BoardServiceImpl{
             if (weather == null) {
                 throw new IllegalArgumentException();
             }
+            Users users = userRepository.findById(userId)
+                    .orElseThrow(()-> new RuntimeException("사용자를 찾을 수 없습니다."));
             return Board.builder()
                     .title(boardRequestDto.getTitle())
                     .date(DateService.strToDate(boardRequestDto.getDate()))
@@ -125,7 +131,7 @@ public class BoardService implements BoardServiceImpl{
                     .scope(Scope.valueOf(boardRequestDto.getScope()))
                     .weather(weather)
                     .boardImage(boardImage)
-//                .user(user)
+                    .user(users)
                     .build();
         } else {
             throw new IllegalArgumentException("일기장 이미 존재");
@@ -153,18 +159,15 @@ public class BoardService implements BoardServiceImpl{
 
     @Override
     public List<BoardResponseDto.BoardListDto> findAllCanSee() {
-        //        Long userId = httpSession.getAttribute("user");
-        //todo 유저까지 반영
-//        List<Long> bestieId = bestieRepository.findAllByUserId(userId);
+        String userNickName = (String) httpSession.getAttribute("userName");
+        List<Long> bestieId = bestieRepository.findIdByBestie(userNickName);
+
         //나를 친한 친구로 생각해주는 친구들의 아이디 리스트를 가져와서 그 친구들의 Bestie 게시물 반환
 
-        List<Long> bestieId = new ArrayList<>();
-        bestieId.add((long)2);
-        bestieId.add((long)3);
         List<Board> publicBoards = boardRepository.findAllByScope(Scope.PUBLIC);
         List<Board> bestieBoards = new ArrayList<>();
-        for (Long aLong : bestieId) {
-            List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, aLong);
+        for (Long bestie : bestieId) {
+            List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, bestie);
             bestieBoards.addAll(boards);
         }
         log.info("[findAll] Find all Boards List that User can see");
