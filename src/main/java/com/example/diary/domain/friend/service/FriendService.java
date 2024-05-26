@@ -60,7 +60,7 @@ public class FriendService {
                 Friend friend = res.get();
                 friend.acceptFriend(follower, receiver, accept);
 
-                return FriendResponseDTO.toAcceptFriendDTO(friend);
+                return FriendResponseDTO.toFriendDTO(friend);
             } else return null;
         } else return null;
     }
@@ -71,6 +71,7 @@ public class FriendService {
 
         if (users.isPresent()) {
             String follower = users.get().getUserNickname();
+            // 현재 사용자의 닉네임으로 친구 조회 (ACCEPT 값이 Y인 것만)
             return friendRepository.findByFollowerAndAccept(follower, "Y");
         } else return null;
     }

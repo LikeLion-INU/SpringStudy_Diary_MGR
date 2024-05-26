@@ -32,14 +32,28 @@ public class UserResponseDTO {
     }
 
     public static UserResponseDTO toUserOptionalDTO(Optional<Users> users) {
+        if (users.isPresent()) {
+            UserResponseDTO userDTO = new UserResponseDTO();
+            userDTO.setId(users.get().getId());
+            userDTO.setUserEmail(users.get().getUserEmail());
+            userDTO.setUserNickname(users.get().getUserNickname());
+            userDTO.setUserGender(users.get().getUserGender());
+            userDTO.setUserBirth(users.get().getUserBirth());
+            userDTO.setUserArea(users.get().getUserArea());
+            userDTO.setUserMbti(users.get().getUserMbti());
+            return userDTO;
+        } else return null;
+    }
+
+    public static UserResponseDTO toSearchAllUser(Long id, String userEmail, String userNickname, String userGender, String userBirth, String userArea, String userMbti) {
         UserResponseDTO userDTO = new UserResponseDTO();
-        userDTO.setId(users.get().getId());
-        userDTO.setUserEmail(users.get().getUserEmail());
-        userDTO.setUserNickname(users.get().getUserNickname());
-        userDTO.setUserGender(users.get().getUserGender());
-        userDTO.setUserBirth(users.get().getUserBirth());
-        userDTO.setUserArea(users.get().getUserArea());
-        userDTO.setUserMbti(users.get().getUserMbti());
+        userDTO.setId(id);
+        userDTO.setUserEmail(userEmail);
+        userDTO.setUserNickname(userNickname);
+        userDTO.setUserGender(userGender);
+        userDTO.setUserBirth(userBirth);
+        userDTO.setUserArea(userArea);
+        userDTO.setUserMbti(userMbti);
         return userDTO;
     }
 }

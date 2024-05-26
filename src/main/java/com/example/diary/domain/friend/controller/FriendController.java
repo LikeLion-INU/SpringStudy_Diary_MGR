@@ -53,15 +53,12 @@ public class FriendController {
         Long id = (Long) httpSession.getAttribute("userId");
         String receiver = userRequestDTO.getUserNickname();
         return ResponseEntity.ok().body(friendService.acceptFriend(id, receiver));
-        //return null;
     }
 
     // 친구 조회
     @PostMapping("/friend/searchFriend")
-    public ResponseEntity<?> searchFriend(@RequestBody UserRequestDTO userRequestDTO) {
-        String nickname = userRequestDTO.getUserNickname();
+    public ResponseEntity<?> searchFriend() {
         Long id = (Long) httpSession.getAttribute("userId");
-        // 닉네임으로 조회 (ACCEPT 값이 Y인 것만)
         return ResponseEntity.ok().body(friendService.searchFriend(id));
     }
 

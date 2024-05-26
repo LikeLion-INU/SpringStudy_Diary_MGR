@@ -29,13 +29,25 @@ public class UserController {
     @PostMapping("/user/logout")
     public ResponseEntity<?> logout (HttpServletRequest request){
         userService.logout(request);
-        return ResponseEntity.ok().body("Logout");
+        return ResponseEntity.ok().body("Logout Success!");
     }
 
     //회원가입
     @PostMapping("/user/save")
-    public ResponseEntity<?> save(@RequestBody UserRequestDTO userDTO) {
+    public ResponseEntity<?> save (@RequestBody UserRequestDTO userDTO) {
         return ResponseEntity.ok().body(userService.save(userDTO));
+    }
+
+    // 이메일 중복 체크
+    @PostMapping("/user/checkEmailDuplicate")
+    public ResponseEntity<?> checkEmailDuplicate (@RequestBody UserRequestDTO userDTO) {
+        return ResponseEntity.ok().body(userService.checkEmailDuplicate(userDTO));
+    }
+
+    // 닉네임 중복 체크
+    @PostMapping("/user/checkNicknameDuplicate")
+    public ResponseEntity<?> checkNicknameDuplicate (@RequestBody UserRequestDTO userDTO) {
+        return ResponseEntity.ok().body(userService.checkNicknameDuplicate(userDTO));
     }
 
     //회원 정보 조회 (전체)
@@ -46,19 +58,19 @@ public class UserController {
 
     //회원 정보 조회 (개인)
     @GetMapping("/user/searchOneUser/{id}")
-    public ResponseEntity<?> searchOneUser(@PathVariable("id") Long id) {
+    public ResponseEntity<?> searchOneUser (@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(userService.searchOneUser(id));
     }
 
     //회원 정보 수정
     @PostMapping("/user/editUser")
-    public ResponseEntity<?> editUser(@RequestBody UserRequestDTO userRequestDTO) {
+    public ResponseEntity<?> editUser (@RequestBody UserRequestDTO userRequestDTO) {
         return ResponseEntity.ok().body(userService.editUser(userRequestDTO));
     }
 
     //회원 정보 삭제
     @PostMapping("/user/deleteUser/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteUser (@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(userService.deleteUser(id));
     }
 }
