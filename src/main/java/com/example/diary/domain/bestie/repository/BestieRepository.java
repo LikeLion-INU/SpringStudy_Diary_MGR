@@ -13,4 +13,6 @@ public interface BestieRepository extends JpaRepository<Bestie, Long> {
     void deleteByIdAndBestie(Long id, String bestie);
     void deleteByBestie(String bestie);
     void deleteByUsers(Users users);
+
+    List<Long> findIdByBestie(String bestie);
 }

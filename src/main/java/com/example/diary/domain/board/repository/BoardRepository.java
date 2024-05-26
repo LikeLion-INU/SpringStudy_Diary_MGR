@@ -11,9 +11,11 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Board findByDate(@NonNull LocalDate date);
+    Board findByDateAndUserId(@NonNull LocalDate date, Long userId);
 
     List<Board> findAllByScope(Scope scope);
+
+    List<Board> findAllByUserId(Long userId);
 
     List<Board> findAllByScopeAndUserId(Scope scope, Long userId);
 }
