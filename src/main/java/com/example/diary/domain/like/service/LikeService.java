@@ -20,9 +20,7 @@ public class LikeService {
     private final HttpSession httpSession;
 
     public String setLike(Long id) {
-//        Long userId = (Long) httpSession.getAttribute("user");
-        Long userId = (long)1;
-        //todo 유저 세션 값 가져오기
+        Long userId = (Long) httpSession.getAttribute("userId");
         Users user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
         Board board = boardRepository.findById(id)
