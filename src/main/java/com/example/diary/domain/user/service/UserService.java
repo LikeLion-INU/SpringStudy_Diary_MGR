@@ -1,5 +1,7 @@
 package com.example.diary.domain.user.service;
 
+import com.example.diary.domain.bestie.domain.Bestie;
+import com.example.diary.domain.bestie.dto.BestieResponseDTO;
 import com.example.diary.domain.bestie.repository.BestieRepository;
 import com.example.diary.domain.user.domain.Users;
 import com.example.diary.domain.user.dto.UserRequestDTO;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -62,15 +65,40 @@ public class UserService {
         return UserResponseDTO.toUserDTO(user);
     }
 
+    public String checkEmailDuplicate(UserRequestDTO userDTO) {
+        String email = userDTO.getUserEmail();
+        Optional<Users> user = userRepository.findByUserEmail(email);
+
+        // Email 중복일 경우 true 리턴
+        if (user.isPresent()) {
+            return "true";
+        } else return "false";
+    }
+
+    public String checkNicknameDuplicate(UserRequestDTO userDTO) {
+        String nickname = userDTO.getUserNickname();
+        Optional<Users> user = userRepository.findByUserNickname(nickname);
+
+        // Nickname 중복일 경우 true 리턴
+        if (user.isPresent()) {
+            return "true";
+        } else return "false";
+    }
+
     //회원조회(전체)
-    public List<Users> getAllUser(){return userRepository.findAll();}
+    public List<UserResponseDTO> getAllUser(){
+        List<Users> usersList = userRepository.findAll();
+                return usersList.stream()
+                        .map(m -> UserResponseDTO.toSearchAllUser(m.getId(), m.getUserEmail(), m.getUserNickname(), m.getUserGender(), m.getUserBirth(), m.getUserArea(), m.getUserMbti()))
+                        .collect(Collectors.toList());
+    }
 
     //회원조회(개인)
     public UserResponseDTO searchOneUser(Long id) {
-        Optional<Users> userId = userRepository.findById(id);
+        Optional<Users> user = userRepository.findById(id);
 
-        if (userId.isPresent()) {
-            return UserResponseDTO.toUserOptionalDTO(userId);
+        if (user.isPresent()) {
+            return UserResponseDTO.toUserOptionalDTO(user);
         } else return null;
     }
 

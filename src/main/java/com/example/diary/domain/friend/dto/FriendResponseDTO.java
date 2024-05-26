@@ -22,12 +22,4 @@ public class FriendResponseDTO {
         friendDTO.setAccept(friend.getAccept());
         return friendDTO;
     }
-
-    public static FriendResponseDTO toAcceptFriendDTO(Friend friend) {
-        FriendResponseDTO friendDTO = new FriendResponseDTO();
-        friendDTO.setFollower(friend.getFollower());
-        friendDTO.setReceiver(friend.getReceiver());
-        friendDTO.setAccept(friend.getAccept());
-        return friendDTO;
-    }
 }
