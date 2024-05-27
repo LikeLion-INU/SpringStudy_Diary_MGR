@@ -30,29 +30,27 @@ public class FriendController {
         return ResponseEntity.ok().body(friendService.requestFriend(id, nickname));
     }
 
-    // 요청 건 친구 조회
-    @PostMapping("/friend/searchRequestFriend")
-    public ResponseEntity<?> searchRequestFriend(@RequestBody UserRequestDTO userRequestDTO) {
-        String nickname = userRequestDTO.getUserNickname();
+    // 요청 건 내역 조회
+    @GetMapping("/friend/searchRequestFriend")
+    public ResponseEntity<?> searchRequestFriend() {
+        String nickname = (String) httpSession.getAttribute("userName");
         // 닉네임으로 조회 (요청 건 내역만)
         return ResponseEntity.ok().body(friendService.searchRequestFriend(nickname));
     }
 
-    // 요청 받은 친구 조회
-    @PostMapping("/friend/searchReceiveFriend")
-    public ResponseEntity<?> searchReceiveFriend(@RequestBody UserRequestDTO userRequestDTO) {
-        String nickname = userRequestDTO.getUserNickname();
+    // 요청 받은 내역 조회
+    @GetMapping("/friend/searchReceiveFriend")
+    public ResponseEntity<?> searchReceiveFriend() {
+        String nickname = (String) httpSession.getAttribute("userName");
         // 닉네임으로 조회 (요청 받은 내역만)
         return ResponseEntity.ok().body(friendService.searchReceiveFriend(nickname));
     }
 
     // 친구 요청 승인
-    @PostMapping("/friend/acceptFriend")
-    public ResponseEntity<?> acceptFriend(@RequestBody UserRequestDTO userRequestDTO) {
+    @PostMapping("/friend/acceptFriend/{friend_id}")
+    public ResponseEntity<?> acceptFriend(@PathVariable("friend_id") Long friendId) {
         // id -> follower, nickname -> receiver
-        Long id = (Long) httpSession.getAttribute("userId");
-        String receiver = userRequestDTO.getUserNickname();
-        return ResponseEntity.ok().body(friendService.acceptFriend(id, receiver));
+        return ResponseEntity.ok().body(friendService.acceptFriend(friendId));
     }
 
     // 친구 조회
