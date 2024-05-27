@@ -19,5 +19,6 @@ public interface BestieRepository extends JpaRepository<Bestie, Long> {
     void deleteByBestie(String bestie);
     void deleteByUsers(Users users);
 
-    List<Long> findIdByBestie(String bestie);
+    @Query("SELECT b.users.id FROM Bestie b WHERE b.bestie = :userNickname")
+    List<Long> findUserIdByBestie(@Param("userNickname") String userNickname);
 }
