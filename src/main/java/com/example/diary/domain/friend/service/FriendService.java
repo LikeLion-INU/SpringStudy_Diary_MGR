@@ -7,6 +7,7 @@ import com.example.diary.domain.user.domain.Users;
 import com.example.diary.domain.user.dto.UserRequestDTO;
 import com.example.diary.domain.user.dto.UserResponseDTO;
 import com.example.diary.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final HttpSession httpSession;
 
     // 친구 요청
     public FriendResponseDTO requestFriend(Long id, String receiver) {
@@ -63,30 +65,25 @@ public class FriendService {
 
     // 친구 요청 승인
     @Transactional
-    public FriendResponseDTO acceptFriend(Long id, String receiver) {
-        Optional<Users> users = userRepository.findById(id);
-
-        if (users.isPresent()) {
-            String follower = users.get().getUserNickname();
-            Optional<Friend> res = friendRepository.findByFollowerAndReceiver(follower, receiver);
-
-            if (res.isPresent()) {
-                String accept = "";
-                //친구 요청이 존재하는데 N 이면 Y로
-                if (Objects.equals(res.get().getAccept(), "N")){
-                    accept = "Y";
-                } else {
-                    //Y 이면 N 으로
-                    accept = "N";
-                }
-                Friend friend = res.get();
-                friend.acceptFriend(follower, receiver, accept);
-
-                return FriendResponseDTO.toFriendDTO(friend);
-
-            }
+    public FriendResponseDTO acceptFriend(Long friendId) {
+        String nickName = (String) httpSession.getAttribute("userName");
+        Friend friend = friendRepository.findById(friendId)
+                .orElseThrow(() -> new RuntimeException("친구 요청이 없습니다."));
+        if (!Objects.equals(friend.getReceiver(), nickName)){
+            throw new RuntimeException("현 회원이 받은 친구 요청이 아닙니다.");
         }
-        return null;
+        String accept = "";
+        //친구 요청이 존재하는데 N 이면 Y로
+        if (Objects.equals(friend.getAccept(), "N")){
+            accept = "Y";
+        } else {
+            //Y 이면 N 으로
+            accept = "N";
+        }
+        friend.toUpdateAccept(accept);
+
+        return FriendResponseDTO.toFriendDTO(friend);
+
     }
 
     // 친구 조회

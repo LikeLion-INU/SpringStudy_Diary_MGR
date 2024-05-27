@@ -34,4 +34,8 @@ public class Friend extends BaseEntity {
         this.receiver = receiver;
         this.accept = accept;
     }
+
+    public void toUpdateAccept(String accept){
+        this.accept = accept;
+    }
 }
