@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -110,12 +111,14 @@ public class BoardService implements BoardServiceImpl{
         Long userId = (Long) httpSession.getAttribute("userId");
         Board board = boardRepository.findByDateAndUserId(DateService.strToDate(boardRequestDto.getDate()), userId);
         if (board == null) {
+            Board newBoard = new Board();
             BoardImage boardImage = null;
             if (boardRequestDto.getImage() != null) {
                 boardImage = BoardImage.builder()
                         .data(boardRequestDto.getImage().getBytes())
                         .build();
                 boardImageRepository.save(boardImage);
+                newBoard.toUpdateBoardImage(boardImage);
             }
             String weather = WeatherService.getWeather(boardRequestDto.getCity(), boardRequestDto.getDate(), jdbcTemplate);
             if (weather == null) {
@@ -130,7 +133,6 @@ public class BoardService implements BoardServiceImpl{
                     .city(boardRequestDto.getCity())
                     .scope(Scope.valueOf(boardRequestDto.getScope()))
                     .weather(weather)
-                    .boardImage(boardImage)
                     .user(users)
                     .build();
         } else {
@@ -160,25 +162,26 @@ public class BoardService implements BoardServiceImpl{
     @Override
     public List<BoardResponseDto.BoardListDto> findAllCanSee() {
         String userNickName = (String) httpSession.getAttribute("userName");
-        List<Long> bestieId = bestieRepository.findIdByBestie(userNickName);
+        Optional<List<Long>> bestieId = Optional.ofNullable(bestieRepository.findUserIdByBestie(userNickName));
 
         //나를 친한 친구로 생각해주는 친구들의 아이디 리스트를 가져와서 그 친구들의 Bestie 게시물 반환
+        List<BoardResponseDto.BoardListDto> boardListDtos = new ArrayList<>();
 
         List<Board> publicBoards = boardRepository.findAllByScope(Scope.PUBLIC);
         List<Board> bestieBoards = new ArrayList<>();
-        for (Long bestie : bestieId) {
-            List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, bestie);
-            bestieBoards.addAll(boards);
+        if (bestieId.isPresent()){
+            for (Long bestie : bestieId.get()) {
+                List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, bestie);
+                bestieBoards.addAll(boards);
+            }
+            boardListDtos.addAll(bestieBoards.stream()
+                    .map(BoardResponseDto.BoardListDto::toDto)
+                    .toList());
         }
-        log.info("[findAll] Find all Boards List that User can see");
-
-        List<BoardResponseDto.BoardListDto> boardListDtos = new ArrayList<>();
         boardListDtos.addAll(publicBoards.stream()
                 .map(BoardResponseDto.BoardListDto::toDto).toList());
-        boardListDtos.addAll(bestieBoards.stream()
-                .map(BoardResponseDto.BoardListDto::toDto)
-                .toList());
 
+        log.info("[findAll] Find all Boards List that User can see");
         return boardListDtos;
     }
 
