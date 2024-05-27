@@ -28,25 +28,26 @@ public class UserService {
 
     // 로그인
     public UserResponseDTO login(UserRequestDTO userRequestDTO, HttpSession session) {
-        Optional<Users> user = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
+        if (checkEmailDuplicate(userRequestDTO)) {
+            Users user = userRepository.findByUserEmail(userRequestDTO.getUserEmail())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않은 회원입니다."));
 
-        if (user.isPresent()) {
             // 세션 값 저장
-            session.setAttribute("userId", user.get().getId());
-            session.setAttribute("userEmail", user.get().getUserEmail());
-            session.setAttribute("userName", user.get().getUserNickname());
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getUserEmail());
+            session.setAttribute("userName", user.getUserNickname());
+            log.info("[Login] User login success, {} {}", user.getUserNickname(), user.getUserEmail());
 
             // 비밀번호 일치 하면 로그인 성공
-            Users users = user.get();
-            if (users.getPassword().equals(userRequestDTO.getPassword())) {
-                return UserResponseDTO.toUserDTO(users);
+            if (user.getPassword().equals(userRequestDTO.getPassword())) {
+                return UserResponseDTO.toUserDTO(user);
             } else {
-                log.info("Password Error!");
-                return null;
+                log.warn("Password Error");
+                throw new RuntimeException("Password Error");
             }
         } else {
-            log.info("User Not Found!");
-            return null;
+            log.warn("User Not Found");
+            throw new RuntimeException("User Not Found");
         }
     }
 
@@ -56,38 +57,42 @@ public class UserService {
         if (session != null) {
             session.invalidate(); // 세션 무효화
         }
+        log.info("Logout Success");
     }
 
     //회원가입
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
-        Users user = UserRequestDTO.toSaveEntity(userRequestDTO);
-        userRepository.save(user);
-        return UserResponseDTO.toUserDTO(user);
+        //이메일 중복 검사
+        Optional<Users> userInfo = userRepository.findByUserEmail(userRequestDTO.getUserEmail());
+        if (checkEmailDuplicate(userRequestDTO)) throw new RuntimeException("이미 존재하는 이메일입니다.");
+        else {
+            Users user = UserRequestDTO.toSaveEntity(userRequestDTO);
+            userRepository.save(user);
+            log.info("[Join] User join success, {} {}", userRequestDTO.getUserNickname(), userRequestDTO.getUserEmail());
+            return UserResponseDTO.toUserDTO(user);
+        }
     }
 
-    public String checkEmailDuplicate(UserRequestDTO userDTO) {
+    public boolean checkEmailDuplicate(UserRequestDTO userDTO) {
         String email = userDTO.getUserEmail();
         Optional<Users> user = userRepository.findByUserEmail(email);
-
+        log.info("Check Email Duplicate");
         // Email 중복일 경우 true 리턴
-        if (user.isPresent()) {
-            return "true";
-        } else return "false";
+        return user.isPresent();
     }
 
-    public String checkNicknameDuplicate(UserRequestDTO userDTO) {
+    public boolean checkNicknameDuplicate(UserRequestDTO userDTO) {
         String nickname = userDTO.getUserNickname();
         Optional<Users> user = userRepository.findByUserNickname(nickname);
-
+        log.info("Check NickName Duplicate");
         // Nickname 중복일 경우 true 리턴
-        if (user.isPresent()) {
-            return "true";
-        } else return "false";
+        return user.isPresent();
     }
 
     //회원조회(전체)
     public List<UserResponseDTO> getAllUser(){
         List<Users> usersList = userRepository.findAll();
+        log.info("Get All Users");
                 return usersList.stream()
                         .map(m -> UserResponseDTO.toSearchAllUser(m.getId(), m.getUserEmail(), m.getUserNickname(), m.getUserGender(), m.getUserBirth(), m.getUserArea(), m.getUserMbti()))
                         .collect(Collectors.toList());
@@ -96,8 +101,8 @@ public class UserService {
     //회원조회(개인)
     public UserResponseDTO searchOneUser(Long id) {
         Optional<Users> user = userRepository.findById(id);
-
         if (user.isPresent()) {
+            log.info("Get User {} info", user.get().getUserNickname());
             return UserResponseDTO.toUserOptionalDTO(user);
         } else return null;
     }
@@ -106,7 +111,7 @@ public class UserService {
     @Transactional
     public UserResponseDTO editUser(UserRequestDTO userRequestDTO) {
         Optional<Users> userEntity = userRepository.findByUserNickname(userRequestDTO.getUserNickname());
-
+        log.info("[Edit] User {} info", userRequestDTO.getUserNickname());
         if (userEntity.isPresent()) {
             Users user  = userEntity.get();
             user.editUser(userRequestDTO.getUserNickname(), userRequestDTO.getUserGender(), userRequestDTO.getUserBirth(), userRequestDTO.getUserArea(), userRequestDTO.getUserMbti());
@@ -119,10 +124,9 @@ public class UserService {
     @Transactional
     public String deleteUser(Long id) {
         Optional<Users> userEntity = userRepository.findById(id);
-
         if (userEntity.isPresent()) {
             Users user = userEntity.get();
-
+            log.info("[Delete] user");
             // FRIEND, BESTIE 테이블에 존재하는 회원 삭제
             friendRepository.deleteByFollowerOrReceiver(user.getUserNickname(), user.getUserNickname());
             bestieRepository.deleteByUsers(user);

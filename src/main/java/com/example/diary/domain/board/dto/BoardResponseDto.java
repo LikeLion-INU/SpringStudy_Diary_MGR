@@ -30,7 +30,10 @@ public class BoardResponseDto {
     public static class BoardUploadDto extends BoardResponseDto {
 
         public static BoardResponseDto.BoardUploadDto toDto(Board b){
-
+            BoardImageResponseDto boardImageResponseDto = new BoardImageResponseDto();
+            if (b.getBoardImage() != null){
+                boardImageResponseDto = BoardResponseDto.byteToBase64(b.getBoardImage());
+            }
             return BoardUploadDto.builder()
                     .id(b.getId())
                     .title(b.getTitle())
@@ -39,7 +42,7 @@ public class BoardResponseDto {
                     .scope(b.getScope())
                     .city(b.getCity())
                     .weather(b.getWeather())
-                    .image(byteToBase64(b.getBoardImage()))
+                    .image(boardImageResponseDto)
                     .build();
 
         }
@@ -49,7 +52,12 @@ public class BoardResponseDto {
     @SuperBuilder
     public static class BoardInfoDto extends BoardResponseDto{
 
+
         public static BoardInfoDto toDto(Board board) {
+            BoardImageResponseDto boardImageResponseDto = new BoardImageResponseDto();
+            if (board.getBoardImage() != null){
+                boardImageResponseDto = BoardResponseDto.byteToBase64(board.getBoardImage());
+            }
             return BoardInfoDto.builder()
                     .id(board.getId())
                     .title(board.getTitle())
@@ -59,7 +67,7 @@ public class BoardResponseDto {
                     .scope(board.getScope())
                     .weather(board.getWeather())
                     .likeCnt(board.getLikeCnt())
-                    .image(BoardResponseDto.byteToBase64(board.getBoardImage()))
+                    .image(boardImageResponseDto)
                     .build();
         }
     }

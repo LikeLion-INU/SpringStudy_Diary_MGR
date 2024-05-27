@@ -65,9 +65,9 @@ else:
     print(json_file)
 
     resultMsg = json_file['response']['header']['resultMsg']
-    if resultMsg != '':
+    if resultMsg != 'NORMAL_SERVICE':
         print(resultMsg)
-        exit(1)
+        exit(1) 
 
     weather_data = json_file['response']['body']['items']['item'][0]
     stnNm = weather_data['stnNm']

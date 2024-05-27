@@ -1,5 +1,6 @@
 package com.example.diary.domain.board.service;
 
+import com.example.diary.domain.bestie.repository.BestieRepository;
 import com.example.diary.domain.board.domain.Board;
 import com.example.diary.domain.image.domain.BoardImage;
 import com.example.diary.domain.board.domain.Scope;
@@ -9,6 +10,8 @@ import com.example.diary.domain.image.dto.BoardImageRequestDto;
 import com.example.diary.domain.image.dto.BoardImageResponseDto;
 import com.example.diary.domain.image.repository.BoardImageRepository;
 import com.example.diary.domain.board.repository.BoardRepository;
+import com.example.diary.domain.user.domain.Users;
+import com.example.diary.domain.user.repository.UserRepository;
 import com.example.diary.global.DateService;
 import com.example.diary.domain.weather.service.WeatherService;
 import jakarta.servlet.http.HttpSession;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,8 @@ public class BoardService implements BoardServiceImpl{
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
+    private final BestieRepository bestieRepository;
+    private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
     private final HttpSession httpSession;
     @Override
@@ -40,9 +46,8 @@ public class BoardService implements BoardServiceImpl{
 
     @Override
     public List<BoardResponseDto.BoardListDto> findAll() {
-//        User user = httpSession.getAttribute("user");
-        //todo 유저까지 반영
-        List<Board> boards = boardRepository.findAll();
+        Long userId = (Long) httpSession.getAttribute("userId");
+        List<Board> boards = boardRepository.findAllByUserId(userId);
         log.info("[findAll] Find all Boards List");
         return boards.stream()
                 .map(BoardResponseDto.BoardListDto::toDto)
@@ -94,7 +99,7 @@ public class BoardService implements BoardServiceImpl{
 
     }
 
-    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto) throws IOException {
+    private Board updateBoard(Long id, BoardRequestDto.BoardUpdateDto boardUpdateDto){
         Board board = boardRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         board.toUpdateBoard(boardUpdateDto);
@@ -103,20 +108,24 @@ public class BoardService implements BoardServiceImpl{
     }
 
     private Board insertBoard(BoardRequestDto boardRequestDto) throws IOException {
-//        User user = httpSession.getAttribute("user");
-        Board board = boardRepository.findByDate(DateService.strToDate(boardRequestDto.getDate()));
+        Long userId = (Long) httpSession.getAttribute("userId");
+        Board board = boardRepository.findByDateAndUserId(DateService.strToDate(boardRequestDto.getDate()), userId);
         if (board == null) {
+            Board newBoard = new Board();
             BoardImage boardImage = null;
             if (boardRequestDto.getImage() != null) {
                 boardImage = BoardImage.builder()
                         .data(boardRequestDto.getImage().getBytes())
                         .build();
                 boardImageRepository.save(boardImage);
+                newBoard.toUpdateBoardImage(boardImage);
             }
             String weather = WeatherService.getWeather(boardRequestDto.getCity(), boardRequestDto.getDate(), jdbcTemplate);
             if (weather == null) {
                 throw new IllegalArgumentException();
             }
+            Users users = userRepository.findById(userId)
+                    .orElseThrow(()-> new RuntimeException("사용자를 찾을 수 없습니다."));
             return Board.builder()
                     .title(boardRequestDto.getTitle())
                     .date(DateService.strToDate(boardRequestDto.getDate()))
@@ -124,8 +133,7 @@ public class BoardService implements BoardServiceImpl{
                     .city(boardRequestDto.getCity())
                     .scope(Scope.valueOf(boardRequestDto.getScope()))
                     .weather(weather)
-                    .boardImage(boardImage)
-//                .user(user)
+                    .user(users)
                     .build();
         } else {
             throw new IllegalArgumentException("일기장 이미 존재");
@@ -153,29 +161,27 @@ public class BoardService implements BoardServiceImpl{
 
     @Override
     public List<BoardResponseDto.BoardListDto> findAllCanSee() {
-        //        Long userId = httpSession.getAttribute("user");
-        //todo 유저까지 반영
-//        List<Long> bestieId = bestieRepository.findAllByUserId(userId);
-        //나를 친한 친구로 생각해주는 친구들의 아이디 리스트를 가져와서 그 친구들의 Bestie 게시물 반환
+        String userNickName = (String) httpSession.getAttribute("userName");
+        Optional<List<Long>> bestieId = Optional.ofNullable(bestieRepository.findUserIdByBestie(userNickName));
 
-        List<Long> bestieId = new ArrayList<>();
-        bestieId.add((long)2);
-        bestieId.add((long)3);
+        //나를 친한 친구로 생각해주는 친구들의 아이디 리스트를 가져와서 그 친구들의 Bestie 게시물 반환
+        List<BoardResponseDto.BoardListDto> boardListDtos = new ArrayList<>();
+
         List<Board> publicBoards = boardRepository.findAllByScope(Scope.PUBLIC);
         List<Board> bestieBoards = new ArrayList<>();
-        for (Long aLong : bestieId) {
-            List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, aLong);
-            bestieBoards.addAll(boards);
+        if (bestieId.isPresent()){
+            for (Long bestie : bestieId.get()) {
+                List<Board> boards = boardRepository.findAllByScopeAndUserId(Scope.BESTIE, bestie);
+                bestieBoards.addAll(boards);
+            }
+            boardListDtos.addAll(bestieBoards.stream()
+                    .map(BoardResponseDto.BoardListDto::toDto)
+                    .toList());
         }
-        log.info("[findAll] Find all Boards List that User can see");
-
-        List<BoardResponseDto.BoardListDto> boardListDtos = new ArrayList<>();
         boardListDtos.addAll(publicBoards.stream()
                 .map(BoardResponseDto.BoardListDto::toDto).toList());
-        boardListDtos.addAll(bestieBoards.stream()
-                .map(BoardResponseDto.BoardListDto::toDto)
-                .toList());
 
+        log.info("[findAll] Find all Boards List that User can see");
         return boardListDtos;
     }
 

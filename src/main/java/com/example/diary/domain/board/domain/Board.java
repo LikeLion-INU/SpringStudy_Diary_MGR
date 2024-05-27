@@ -54,4 +54,8 @@ public class Board extends BaseEntity {
     }
 
     public void toUpdateScope(Scope scope) {this.scope = scope;}
+
+    public void toUpdateBoardImage(BoardImage boardImage) {
+        this.boardImage = boardImage;
+    }
 }
