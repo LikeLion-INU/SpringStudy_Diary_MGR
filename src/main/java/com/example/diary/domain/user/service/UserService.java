@@ -36,7 +36,7 @@ public class UserService {
             session.setAttribute("userId", user.getId());
             session.setAttribute("userEmail", user.getUserEmail());
             session.setAttribute("userName", user.getUserNickname());
-            log.info("[Login] User login success, {} {}", userRequestDTO.getUserNickname(), userRequestDTO.getUserEmail());
+            log.info("[Login] User login success, {} {}", user.getUserNickname(), user.getUserEmail());
 
             // 비밀번호 일치 하면 로그인 성공
             if (user.getPassword().equals(userRequestDTO.getPassword())) {
